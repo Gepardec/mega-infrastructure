@@ -1,0 +1,84 @@
+= MEGA
+
+Make End-of-the-month-process Great Again!
+
+== Prerequisites
+
+=== Google OAuth2 client setup
+
+See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
+
+== Dockerfiles
+
+These are the Dockerfiles used by this project
+
+* link:docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile] +
+ The Dockerfile for building the nodejs build agent
+* link:docker/agent-quarkus/Dockerfile[agent-quarkus/Dockerfile] +
+ The Dockerfile for building the quarkus build agent
+
+== Openshift Dev Project
+
+.google-secrets.properties (google related configurations)
+[source,properties]
+----
+# Used by the frontend for two factor authentication
+oauth.clientId=<GOOGLE_OAUTH_CLIENT_ID>
+----
+
+.application.properties
+[source,properties]
+----
+??
+----
+
+.Secrets
+[source,bash]
+----
+# Create secrets
+oc apps/ocp.sh createSecret
+
+# Delete secrets
+oc apps/ocp.sh deleteSecret
+
+# Delete/Create secrets
+oc apps/ocp.sh recreateSecret
+----
+
+.Build Configurations
+[source,bash]
+----
+# Create all build configs
+oc apps/ocp.sh createBuildConfigs
+
+# Delete all build configs
+oc apps/ocp.sh deleteBuildConfigs
+
+# Delete/Create all build configs
+oc apps/ocp.sh recreateBuildConfigs
+----
+
+.Jenkins
+[source,bash]
+----
+# Create jenkins
+oc apps/ocp.sh createJenkins
+
+# Delete jenkins
+oc apps/ocp.sh deleteJenkins
+
+# Delete/Create jenkins
+oc apps/ocp.sh recreateJenkins
+----
+
+IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars in ``apps/ocp.sh`` are properly setup for your needs.
+
+== Openshift Test/Prod Project
+
+.Secrets
+[source,bash]
+----
+oc create secret generic mega-secrets --from-file=filename=mega-secrets.properties
+----
+
+IMPORTANT: Ensure that the configuration is properly setup for your environment
