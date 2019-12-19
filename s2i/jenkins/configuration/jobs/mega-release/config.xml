@@ -49,13 +49,13 @@
             <configVersion>2</configVersion>
             <userRemoteConfigs>
                 <hudson.plugins.git.UserRemoteConfig>
-                    <url>https://github.com/Gepardec/mega.git</url>
+                    <url>git@github.com:Gepardec/mega-infrastructure.git</url>
                     <credentialsId>mega-git-ssh</credentialsId>
                 </hudson.plugins.git.UserRemoteConfig>
             </userRemoteConfigs>
             <branches>
                 <hudson.plugins.git.BranchSpec>
-                    <name>feature/ocp-builds</name>
+                    <name>master</name>
                 </hudson.plugins.git.BranchSpec>
             </branches>
             <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
