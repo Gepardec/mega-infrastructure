@@ -68,7 +68,9 @@ Image-Tag:      ${params.version}\
                         script {
                             dir('apps/mega-zep') {
                                 openshift.withCluster() {
-                                    createServiceResources("mega-zep-frontend", params.targetEnvironment)
+                                    createServiceResources("mega-zep-frontend", \
+                                                           params.targetEnvironment, \
+                                                           "--param=IMAGE_STREAM_TAG='mega-zep-frontend:${params.version}'")
                                 }
                             }
                         }
@@ -85,7 +87,7 @@ Image-Tag:      ${params.version}\
                                     createServiceResources("mega-zep-backend",
                                             params.targetEnvironment,
                                             "--param=JAVA_OPTIONS='-Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}' \
-                                            --param=IMAGE_STREAM_TAG='${params.version}'")
+                                             --param=IMAGE_STREAM_TAG='mega-zep-backend:${params.version}'")
                                 }
                             }
                         }
