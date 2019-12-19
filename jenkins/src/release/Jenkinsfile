@@ -88,7 +88,7 @@ Version: ${params.version}\
                 script {
                     openshift.withCluster() {
                         openshift.tag("57-mega-dev/mega-zep-frontend:${params.version}-${params.environment}", "${env.TARGET_PROJECT}/mega-zep-frontend:latest")
-                        openshift.tag("57-mega-dev/mega-zep-backend:${params.version}-${params.environment}", "${env.TARGET_PROJECT}/mega-zep-backend:latest")
+                        openshift.tag("57-mega-dev/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:latest")
                     }
                 }
             }
