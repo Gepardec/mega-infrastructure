@@ -25,13 +25,13 @@ function createSecrets {
 }
 
 function deleteSecrets {
-    oc delete secrets/mega-secrets
-    oc delete secrets/google-secrets
-    oc delete secrets/mega-git-ssh
+    oc delete secrets/mega-secrets --ignore-not-found
+    oc delete secrets/google-secrets --ignore-not-found
+    oc delete secrets/mega-git-ssh --ignore-not-found
 }
 
-function recreateSecrets{
-    deleteSecret
+function recreateSecrets {
+    deleteSecrets
     createSecrets
 }
 
@@ -45,19 +45,19 @@ function createBuildConfigs() {
     oc set triggers bc/mega-zep-frontend --remove-all
 
     # Quarkus Build Agent
-    oc new-build git@github.com:Gepardec/mega-infrastructure.git#master --name=quarkus-build-agent --context-dir=docker/agent-quarkus --source-secret=${GIT_SECRET}
+    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=quarkus-build-agent --context-dir=docker/agent-quarkus --source-secret=${GIT_SECRET}
     oc set triggers bc/quarkus-build-agent --remove-all
 
     # Nodejs Build Agent
-    oc new-build git@github.com:Gepardec/mega-infrastructure.git#master --name=nodejs-build-agent --context-dir=docker/agent-nodejs --source-secret=${GIT_SECRET}
+    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=nodejs-build-agent --context-dir=docker/agent-nodejs --source-secret=${GIT_SECRET}
     oc set triggers bc/nodejs-build-agent --remove-all
 }
 
 function deleteBuildConfigs() {
-    oc delete bc/mega-zep-backend
-    oc delete bc/mega-zep-frontend
-    oc delete bc/quarkus-build-agent
-    oc delete bc/nodejs-build-agent
+    oc delete bc/mega-zep-backend --ignore-not-found
+    oc delete bc/mega-zep-frontend --ignore-not-found
+    oc delete bc/quarkus-build-agent --ignore-not-found
+    oc delete bc/nodejs-build-agent --ignore-not-found
 }
 
 function recreateBuildConfigs() {
