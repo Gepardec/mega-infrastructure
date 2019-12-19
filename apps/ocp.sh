@@ -30,10 +30,15 @@ function createJenkinsSecrets {
     oc label secret google-secrets credential.sync.jenkins.openshift.io=true
 
     # Create git ssh secret
-    oc create secret generic mega-git-ssh --from-file=ssh-privatekey=../mega-dev.ssh.key --type=kubernetes.io/ssh-auth -n 57-mega-dev
+    oc create secret generic mega-git-ssh --from-file=ssh-privatekey=../mega-dev.ssh.key --type=kubernetes.io/ssh-auth
     oc annotate secret mega-git-ssh jenkins.openshift.io/secret.name=mega-git-ssh
     oc label secret mega-git-ssh credential.sync.jenkins.openshift.io=true
     oc secrets link builder mega-git-ssh
+
+    # Create git http secret (Necessary for multibranch plugin)
+    oc create secret generic mega-git-http --from-file=../mega-dev-http.properties --type=kubernetes.io/basic-auth
+    oc annotate secret mega-git-http jenkins.openshift.io/secret.name=mega-git-http
+    oc label secret mega-git-http credential.sync.jenkins.openshift.io=true
 }
 
 function deleteJenkinsSecrets {

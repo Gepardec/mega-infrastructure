@@ -1,3 +1,4 @@
 mega-secrets*.properties
 mega-dev.ssh.key
+mega-dev-http.properties
 google-secrets*.properties
