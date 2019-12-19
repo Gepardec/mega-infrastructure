@@ -39,8 +39,12 @@ Image-Tag:      ${params.version}\
                 script {
                     dir('apps/mega-zep') {
                         openshift.withCluster() {
-                            deleteServiceResources("mega-zep-backend", params.targetEnvironment)
-                            deleteServiceResources("mega-zep-frontend", params.targetEnvironment)
+                            deleteServiceResources("mega-zep-backend", \
+                                                   params.targetEnvironment, \
+                                                   "--param=IMAGE_STREAM_TAG='mega-zep-backend:${params.version}'")
+                            deleteServiceResources("mega-zep-frontend", \
+                                                   params.targetEnvironment, \
+                                                   "--param=IMAGE_STREAM_TAG='mega-zep-frontend:${params.version}'")
                         }
                     }
                 }
