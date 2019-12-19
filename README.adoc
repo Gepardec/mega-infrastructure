@@ -19,30 +19,20 @@ These are the Dockerfiles used by this project
 
 == Openshift Dev Project
 
-.google-secrets.properties (google related configurations)
-[source,properties]
-----
-# Used by the frontend for two factor authentication
-oauth.clientId=<GOOGLE_OAUTH_CLIENT_ID>
-----
-
-.application.properties
-[source,properties]
-----
-??
-----
-
 .Secrets
 [source,bash]
 ----
 # Create secrets
-oc apps/ocp.sh createSecret
+STAGE=[dev|prod|test] oc apps/ocp.sh createMegaSecrets
+STAGE=[dev|prod|test] oc apps/ocp.sh createJenkinsSecrets
 
 # Delete secrets
-oc apps/ocp.sh deleteSecret
+oc apps/ocp.sh deleteMegaSecrets
+oc apps/ocp.sh deleteJenkinsSecrets
 
 # Delete/Create secrets
-oc apps/ocp.sh recreateSecret
+STAGE=[dev|prod|test] oc apps/ocp.sh recreateMegaSecrets
+STAGE=[dev|prod|test] oc apps/ocp.sh recreateJenkinsSecrets
 ----
 
 .Build Configurations

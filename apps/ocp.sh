@@ -1,38 +1,50 @@
 #!/bin/bash
 
 GIT_SECRET='mega-git-ssh'
-
 cd $(pwd)
 
 set -u
 
-function createSecrets {
+function createMegaSecrets {
+    oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
+}
+
+function deleteMegaSecrets {
+    oc delete secret mega-secrets --ignore-not-found
+}
+
+function recreateMegaSecrets {
+    deleteMegaSecrets
+    createMegaSecrets
+}
+
+function createJenkinsSecrets {
     # Create mega secret for service and jenkins
-    oc create secret generic mega-secrets --from-file=filename=mega-secrets.properties
+    oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
     oc annotate secret mega-secrets jenkins.openshift.io/secret.name=mega-secrets
     oc label secret mega-secrets credential.sync.jenkins.openshift.io=true
 
     # Create google secret for frontend build
-    oc create secret generic google-secrets --from-file=filename=google-secrets.properties
+    oc create secret generic google-secrets --from-file=filename=../google-secrets.properties
     oc annotate secret google-secrets jenkins.openshift.io/secret.name=google-secrets
     oc label secret google-secrets credential.sync.jenkins.openshift.io=true
 
     # Create git ssh secret
-    oc create secret generic mega-git-ssh --from-file=ssh-privatekey=mega-dev.ssh.key --type=kubernetes.io/ssh-auth -n 57-mega-dev
+    oc create secret generic mega-git-ssh --from-file=ssh-privatekey=../mega-dev.ssh.key --type=kubernetes.io/ssh-auth -n 57-mega-dev
     oc annotate secret mega-git-ssh jenkins.openshift.io/secret.name=mega-git-ssh
     oc label secret mega-git-ssh credential.sync.jenkins.openshift.io=true
     oc secrets link builder mega-git-ssh
 }
 
-function deleteSecrets {
+function deleteJenkinsSecrets {
     oc delete secrets/mega-secrets --ignore-not-found
     oc delete secrets/google-secrets --ignore-not-found
     oc delete secrets/mega-git-ssh --ignore-not-found
 }
 
-function recreateSecrets {
-    deleteSecrets
-    createSecrets
+function recreateJenkinsSecrets {
+    deleteJenkinsSecrets
+    createJenkinsSecrets
 }
 
 function createBuildConfigs() {
