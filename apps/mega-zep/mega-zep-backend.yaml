@@ -161,4 +161,5 @@ parameters:
     required: true
   - name: "IMAGE_STREAM_TAG"
     displayName: "The image stream tag to use. E.g.: mega-zep-backend:latest"
+    value: "mega-zep-backend:latest"
     required: true
