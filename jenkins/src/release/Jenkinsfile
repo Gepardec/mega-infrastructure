@@ -110,7 +110,6 @@ def createServiceResources(String service, String stage = "", String additionalP
     }
     sh "oc process --filename apps/mega-zep/${service}.yaml \
                    --param-file=apps/mega-zep/${service}${stage}.properties ${additionalParams} \
-                   --output yaml \
                    | oc create --filename -"
 }
 
