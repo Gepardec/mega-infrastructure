@@ -38,9 +38,11 @@ Version: ${params.version}\
             }
             steps {
                 script {
-                    openshift.withCluster() {
-                        deleteServiceResources("mega-zep-backend", params.environment)
-                        deleteServiceResources("mega-zep-frontend", params.environment)
+                    dir('apps/mega-zep') {
+                        openshift.withCluster() {
+                            deleteServiceResources("mega-zep-backend", params.environment)
+                            deleteServiceResources("mega-zep-frontend", params.environment)
+                        }
                     }
                 }
             }
