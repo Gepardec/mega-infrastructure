@@ -53,7 +53,7 @@ Version: ${params.version}\
                         script {
                             dir('apps/mega-zep') {
                                 openshift.withCluster() {
-                                    recreateServiceResources("mega-zep-frontend", params.environment)
+                                    createServiceResources("mega-zep-frontend", params.environment)
                                 }
                             }
                         }
@@ -67,7 +67,7 @@ Version: ${params.version}\
                                 openshift.withCluster() {
                                     def frontendProps = readServiceProperties("mega-zep-frontend", ".", params.environment)
                                     def service = "https://${frontendProps.NAME}-${env.OCP_ROUTE_SUFFIX}"
-                                    recreateServiceResources("mega-zep-backend",
+                                    createServiceResources("mega-zep-backend",
                                             params.environment,
                                             "--param=JAVA_OPTIONS='-Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}'")
                                 }
