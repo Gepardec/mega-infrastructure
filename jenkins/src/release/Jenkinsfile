@@ -99,8 +99,8 @@ def deleteServiceResources(String service, String stage = "") {
     if (stage != "") {
         stage = "." + stage
     }
-    sh "oc process --filename apps/mega-zep/${service}.yaml \
-                   --param-file=apps/mega-zep/${service}${stage}.properties \
+    sh "oc process --filename ${service}.yaml \
+                   --param-file=${service}${stage}.properties \
                    | oc delete --ignore-not-found --filename -"
 }
 
@@ -108,8 +108,8 @@ def createServiceResources(String service, String stage = "", String additionalP
     if (stage != "") {
         stage = "." + stage
     }
-    sh "oc process --filename apps/mega-zep/${service}.yaml \
-                   --param-file=apps/mega-zep/${service}${stage}.properties ${additionalParams} \
+    sh "oc process --filename ${service}.yaml \
+                   --param-file=/${service}${stage}.properties ${additionalParams} \
                    | oc create --filename -"
 }
 
