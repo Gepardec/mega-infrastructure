@@ -10,8 +10,7 @@ pipeline {
 
     environment {
         MEGA_PROJECT = "57-mega-"
-        PROD_PROJECT = "57-services"
-        TARGET_PROJECT = "${params.environment.equals('prod') ? env.PROD_PROJECT : (env.MEGA_PROJECT + params.environment)}"
+        TARGET_PROJECT = "${env.MEGA_PROJECT + params.environment}"
         OCP_ROUTE_SUFFIX = "${env.TARGET_PROJECT}.cloud.itandtel.at"
     }
 
