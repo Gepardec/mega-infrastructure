@@ -24,11 +24,6 @@ function createJenkinsSecrets {
     oc annotate secret mega-secrets jenkins.openshift.io/secret.name=mega-secrets
     oc label secret mega-secrets credential.sync.jenkins.openshift.io=true
 
-    # Create google secret for frontend build
-    oc create secret generic google-secrets --from-file=filename=../google-secrets.properties
-    oc annotate secret google-secrets jenkins.openshift.io/secret.name=google-secrets
-    oc label secret google-secrets credential.sync.jenkins.openshift.io=true
-
     # Create git ssh secret
     oc create secret generic mega-git-ssh --from-file=ssh-privatekey=../mega-dev.ssh.key --type=kubernetes.io/ssh-auth
     oc annotate secret mega-git-ssh jenkins.openshift.io/secret.name=mega-git-ssh
@@ -43,7 +38,6 @@ function createJenkinsSecrets {
 
 function deleteJenkinsSecrets {
     oc delete secrets/mega-secrets --ignore-not-found
-    oc delete secrets/google-secrets --ignore-not-found
     oc delete secrets/mega-git-ssh --ignore-not-found
     oc delete secrets/mega-git-http --ignore-not-found
 }

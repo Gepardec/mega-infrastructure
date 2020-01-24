@@ -17,6 +17,12 @@ These are the Dockerfiles used by this project
 * link:docker/agent-quarkus/Dockerfile[agent-quarkus/Dockerfile] +
  The Dockerfile for building the quarkus build agent
 
+== Configuration files
+
+For the secret creation the following config files are expected
+
+. mega-secrets.<STAGE>.properties
+
 == Openshift Dev Project
 
 .Secrets
