@@ -9,6 +9,9 @@ USER root
 RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash - \
     && yum install -y gcc c++ make nodejs-12.5.0 \
     && npm install -g @angular/cli \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
+    && yum -y install google-chrome-stable_current_x86_64.rpm \
+    && rm -f google-chrome-stable_current_x86_64.rpm \
     && yum clean all -y \
     && rm -rf /var/cache/yum \
     && chown -R 1001:0 /npm \
