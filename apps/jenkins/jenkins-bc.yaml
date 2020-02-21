@@ -9,6 +9,15 @@ metadata:
     tags: "jenkins"
 
 parameters:
+  - name: "JENKINS_SERVICE_NAME"
+    required: true
+
+  - name: "JENKINS_S2I_IMAGE"
+    required: true
+
+  - name: "JENKINS_IMAGE_STREAM_TAG"
+    required: true
+    
   - name: "GIT_URL"
     displayName: "Git url"
     description: "The git url of the repository holding the S2I resources"
@@ -33,7 +42,7 @@ objects:
   - kind: "ImageStream"
     apiVersion: "v1"
     metadata:
-      name: "jenkins-s2i"
+      name: "${JENKINS_SERVICE_NAME}-s2i"
       labels:
         app: "${APP}"
     spec:
@@ -43,19 +52,19 @@ objects:
         - name: latest
           from:
             kind: DockerImage
-            name: 'docker.io/openshift/jenkins-2-centos7:v3.11'
+            name: "${JENKINS_S2I_IMAGE}"
 
   - kind: "ImageStream"
     apiVersion: "v1"
     metadata:
-      name: "jenkins-custom"
+      name: "${JENKINS_SERVICE_NAME}-custom"
       labels:
         app: "${APP}"
 
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: custom-jenkins-build
+      name: "${JENKINS_SERVICE_NAME}-custom"
     spec:
       source:  
         contextDir: "s2i/jenkins"                     
@@ -69,12 +78,12 @@ objects:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: jenkins-s2i:latest
+            name: ${JENKINS_SERVICE_NAME}-s2i:latest
         type: Source
       output:                       
         to:
           kind: ImageStreamTag
-          name: jenkins-custom:latest
+          name: ${JENKINS_IMAGE_STREAM_TAG}
       triggers:
         - type: "ImageChange" 
         - type: "ConfigChange"

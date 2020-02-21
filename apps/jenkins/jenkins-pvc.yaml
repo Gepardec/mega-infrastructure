@@ -16,7 +16,7 @@ objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: "${JENKINS_SERVICE_NAME}-mvn-repo-cache"
+      name: "${JENKINS_SERVICE_NAME}"
     spec:
       accessModes:
         - ReadWriteMany
