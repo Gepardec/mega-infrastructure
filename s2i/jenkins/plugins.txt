@@ -67,7 +67,7 @@ ldap:1.21
 lockable-resources:2.7
 mailer:1.30
 mapdb-api:1.0.9.0
-matrix-auth:2.5
+matrix-auth:2.4.2
 matrix-project:1.14
 maven-plugin:3.4
 mercurial:2.8
