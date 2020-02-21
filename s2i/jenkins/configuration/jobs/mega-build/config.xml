@@ -39,7 +39,7 @@
       <jenkins.branch.BranchSource>
         <source class="jenkins.plugins.git.GitSCMSource" plugin="git@4.1.1">
           <id>af86fc3b-3e3d-4e00-bbfd-9270a50f4022</id>
-          <remote>https://github.com:Gepardec/mega.git</remote>
+          <remote>https://github.com/Gepardec/mega.git</remote>
           <credentialsId>mega-git-http</credentialsId>
           <traits>
             <jenkins.plugins.git.traits.BranchDiscoveryTrait/>
