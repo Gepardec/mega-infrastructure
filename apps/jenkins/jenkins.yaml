@@ -100,8 +100,10 @@ objects:
         serviceAccountName: ${JENKINS_SERVICE_NAME}
         volumes:
           - name: ${JENKINS_SERVICE_NAME}-data
-            persistentVolumeClaim:
-              claimName: ${JENKINS_PVC_NAME}
+            emptyDir:
+              medium: ""
+#            persistentVolumeClaim:
+#              claimName: ${JENKINS_PVC_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
