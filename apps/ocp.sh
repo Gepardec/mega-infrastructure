@@ -49,7 +49,7 @@ function recreateJenkinsSecrets {
 
 function createBuildConfigs() {
     # Binary build for backend uber jar
-    oc new-build --binary=true --name=mega-zep-backend --docker-image=docker.io/fabric8/s2i-java:latest-java11
+    oc new-build --binary=true --name=mega-zep-backend --docker-image=docker.io/fabric8/s2i-java:3.0-java11
     oc set triggers bc/mega-zep-backend --remove-all
 
     # Binary build for frontend html content
@@ -57,12 +57,11 @@ function createBuildConfigs() {
     oc set triggers bc/mega-zep-frontend --remove-all
 
     # Quarkus Build Agent
-    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --labels=role=jenkins-slave --name=quarkus-build-agent --context-dir=docker/agent-quarkus --source-secret=${GIT_SECRET}
+    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=quarkus-build-agent --context-dir=docker/agent-quarkus --source-secret=${GIT_SECRET}
     oc set triggers bc/quarkus-build-agent --remove-all
-    oc label is/quarkus-build-agent role=jenkins-slave
 
     # Nodejs Build Agent
-    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --labels=role=jenkins-slave --name=nodejs-build-agent --context-dir=docker/agent-nodejs --source-secret=${GIT_SECRET}
+    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=nodejs-build-agent --context-dir=docker/agent-nodejs --source-secret=${GIT_SECRET}
     oc set triggers bc/nodejs-build-agent --remove-all
 }
 
@@ -81,32 +80,18 @@ function recreateBuildConfigs() {
 function createJenkins {
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
-    oc process -f  jenkins/maven-pvc.yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
+    oc create -f  jenkins/maven-pvc.yaml
 }
 
 function deleteJenkins {
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
-    oc process -f  jenkins/maven-pvc.yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
+    oc delete -f  jenkins/maven-pvc.yaml
 }
 
 function recreateJenkins {
     deleteJenkins
     createJenkins
-}
-
-
-function createJenkinsPvc {
-    oc process -f jenkins/jenkins-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
-}
-
-function deleteJenkinsPvc {
-    oc process -f jenkins/jenkins-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
-}
-
-function recreateJenkinsPvc {
-    deleteJenkinsPvc
-    createJenkinsPvc
 }
 
 ${1}
