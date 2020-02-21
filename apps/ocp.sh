@@ -48,6 +48,8 @@ function recreateJenkinsSecrets {
 }
 
 function createBuildConfigs() {
+    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
+
     # Binary build for backend uber jar
     oc new-build --binary=true --name=mega-zep-backend --docker-image=docker.io/fabric8/s2i-java:latest-java11
     oc set triggers bc/mega-zep-backend --remove-all
@@ -58,6 +60,8 @@ function createBuildConfigs() {
 }
 
 function deleteBuildConfigs() {
+    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
+
     oc delete bc/mega-zep-backend --ignore-not-found
     oc delete bc/mega-zep-frontend --ignore-not-found
 }
@@ -68,13 +72,11 @@ function recreateBuildConfigs() {
 }
 
 function createJenkins {
-    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
 }
 
 function deleteJenkins {
-    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
 }
