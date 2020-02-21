@@ -1,8 +1,10 @@
 # We use 3.9 because of the oc binary we use in the containers
 FROM docker.io/openshift/jenkins-slave-base-centos7:v3.9
+#FROM openshift/origin:v3.9.0
 
 ENV PATH=$PATH:/maven/bin
-ENV MAVEN_HOME=/maven \
+ENV HOME=/home/jenkins \
+    MAVEN_HOME=/maven \
     M2_HOME=/maven
 
 USER root 
