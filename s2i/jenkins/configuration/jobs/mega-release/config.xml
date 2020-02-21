@@ -19,19 +19,10 @@
     <properties>
         <hudson.model.ParametersDefinitionProperty>
             <parameterDefinitions>
-                <hudson.model.ChoiceParameterDefinition>
-                    <name>environment</name>
-                    <description>The environment to deploy to</description>
-                    <choices>
-                        <string>dev</string>
-                        <string>test</string>
-                        <string>prod</string>
-                    </choices>
-                </hudson.model.ChoiceParameterDefinition>
                 <hudson.model.StringParameterDefinition>
-                    <name>version</name>
-                    <description>The image version to release</description>
-                    <defaultValue>latest</defaultValue>
+                    <name>Branch</name>
+                    <description>The branch/commit/tag to get the Jenkinsfile from</description>
+                    <defaultValue>master</defaultValue>
                     <trim>true</trim>
                 </hudson.model.StringParameterDefinition>
             </parameterDefinitions>
