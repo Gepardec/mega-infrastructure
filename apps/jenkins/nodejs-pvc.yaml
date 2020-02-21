@@ -1,10 +1,25 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
+kind: "Template"
+apiVersion: "v1"
 metadata:
-  name: jenkins-nodejs-repo-cache
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi
+  name: "jenkins-custom"
+  annotations:
+    openshift.io/display-name: "Jenkins slaves"
+    description: "Jenkins slaves"
+    iconClass: "icon-jenkins"
+    tags: "jenkins"
+
+parameters:
+  - name: "JENKINS_SERVICE_NAME"
+    required: true
+
+objects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}-nodejs-repo-cache"
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi

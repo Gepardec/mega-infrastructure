@@ -1,3 +1,4 @@
+# We use 3.9 because of the oc binary we use in the containers
 FROM docker.io/openshift/jenkins-slave-base-centos7:v3.9
 
 ENV NPM_CONFIG_PREFIX=/npm/.npm-global \

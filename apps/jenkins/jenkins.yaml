@@ -99,9 +99,9 @@ objects:
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
         volumes:
-        - emptyDir:
-            medium: ""
-          name: ${JENKINS_SERVICE_NAME}-data
+          - name: ${JENKINS_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${JENKINS_PVC_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -158,6 +158,8 @@ parameters:
   displayName: Jenkins Service Name
   name: JENKINS_SERVICE_NAME
   value: jenkins
+- name: "JENKINS_PVC_NAME"
+  value: "jenkins"
 - description: The name of the service used for master/slave communication.
   displayName: Jenkins JNLP Service Name
   name: JNLP_SERVICE_NAME
