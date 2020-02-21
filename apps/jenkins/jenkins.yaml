@@ -99,9 +99,9 @@ objects:
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
         volumes:
-        - emptyDir:
-            medium: ""
-          name: ${JENKINS_SERVICE_NAME}-data
+          - name: ${JENKINS_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${JENKINS_PVC_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -154,6 +154,10 @@ objects:
     sessionAffinity: None
     type: ClusterIP
 parameters:
+- description: The name of the OpenShift PVC exposed for the Jenkins container.
+  displayName: Jenkins PVC Name
+  name: JENKINS_PVC_NAME
+  value: jenkins
 - description: The name of the OpenShift Service exposed for the Jenkins container.
   displayName: Jenkins Service Name
   name: JENKINS_SERVICE_NAME

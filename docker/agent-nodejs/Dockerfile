@@ -1,4 +1,4 @@
-FROM docker.io/openshift/jenkins-slave-base-centos7:v3.9
+FROM docker.io/openshift/jenkins-slave-base-centos7:v3.11
 
 ENV NPM_CONFIG_PREFIX=/npm/.npm-global \
     PATH=/npm/node_modules/.bin/:/npm/.npm-global/bin:$PATH

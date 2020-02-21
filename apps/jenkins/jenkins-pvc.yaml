@@ -1,10 +1,10 @@
 kind: "Template"
 apiVersion: "v1"
 metadata:
-  name: "jenkins-maven-pvc"
+  name: "jenkins-pvc"
   annotations:
-    openshift.io/display-name: "Jenkins Maven PVC"
-    description: "Jenkins Maven PVC"
+    openshift.io/display-name: "Jenkins PVC"
+    description: "Jenkins PVC"
     iconClass: "icon-jenkins"
     tags: "jenkins"
 
@@ -18,7 +18,7 @@ objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: "${JENKINS_SERVICE_NAME}-mvn-repo-cache"
+      name: "${JENKINS_SERVICE_NAME}"
     spec:
       accessModes:
         - ReadWriteMany
