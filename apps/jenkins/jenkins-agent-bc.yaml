@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: jenkins-agents
+parameters:    
+    - name: "GIT_URL"
+      required: true
+
+    - name: "GIT_REF"
+      required: true
+
+    - name: "GIT_SECRET"
+      required: true
+    
+    - name: "OPENJDK_IMAGE"
+      value: "docker.io/library/openjdk:11-jdk-slim"
+     
+    - name: "JENKINS_SLAVE_BASE_IMAGE"
+      value: "docker.io/openshift/jenkins-slave-base-centos7:v3.9"
+
+    - name: "OPENJDK_IS"
+      value: "openjdk-custom"
+
+    - name: "JENKINS_SLAVE_BASE_IS"
+      value: "jenkins-slave-base-custom"
+
+    - name: "OPENJDK_AGENT_IS"
+      value: "jenkins-agent-jdk-11"
+
+    - name: "NODEJS_AGENT_IS"
+      value: "jenkins-agent-nodejs-12-5"
+
+    - name: "OPENJDK_CONTEXT"
+      value: "docker/agent-jdk"
+
+    - name: "NODEJS_CONTEXT"
+      value: "docker/agent-nodejs"
+    
+objects:
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+      name: "${OPENJDK_IS}"
+    spec:
+      lookupPolicy:
+        local: true
+      tags:
+        - name: latest
+          from:
+            kind: DockerImage
+            name: '${OPENJDK_IMAGE}'
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SLAVE_BASE_IS}"
+    spec:
+      lookupPolicy:
+        local: true
+      tags:
+        - name: latest
+          from:
+            kind: DockerImage
+            name: "${JENKINS_SLAVE_BASE_IMAGE}"
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+        name: "openjdk"
+    spec:
+        lookupPolicy:
+        local: true
+        tags:
+            - name: 11-jdk-slim
+              from:
+                kind: DockerImage
+                name: 'library/openjdk:11-jdk-slim'        
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+        name: "${OPENJDK_AGENT_IS}"
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+        name: "${NODEJS_AGENT_IS}"
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+        name: ${OPENJDK_AGENT_IS}
+    spec:
+        output:
+            to:
+                kind: ImageStreamTag
+                name: ${OPENJDK_AGENT_IS}:latest
+        runPolicy: Serial
+        source:
+            contextDir: "${OPENJDK_CONTEXT}"
+            git:
+                ref: "${GIT_REF}"
+                uri: "${GIT_URL}"
+            sourceSecret:
+                name: "${GIT_SECRET}"
+            type: Git
+        strategy:
+            dockerStrategy:
+                from:
+                    kind: ImageStreamTag
+                    name: ${OPENJDK_IS}:latest
+            type: Docker
+        triggers:
+            - type: ConfigChange
+            - imageChange: {}
+              type: ImageChange
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+        name: ${NODEJS_AGENT_IS}
+    spec:
+        output:
+            to:
+                kind: ImageStreamTag
+                name: ${NODEJS_AGENT_IS}:latest
+        runPolicy: Serial
+        source:
+            contextDir: "${NODEJS_CONTEXT}"
+            git:
+                ref: "${GIT_REF}"
+                uri: "${GIT_URL}"
+            sourceSecret:
+                name: "${GIT_SECRET}"
+            type: Git
+        strategy:
+            dockerStrategy:
+                from:
+                    kind: ImageStreamTag
+                    name: "${JENKINS_SLAVE_BASE_IS}:latest"
+            type: Docker
+        triggers:
+        - type: ConfigChange
+        - imageChange: {}
+          type: ImageChange

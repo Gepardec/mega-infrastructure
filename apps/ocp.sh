@@ -55,19 +55,11 @@ function createBuildConfigs() {
     # Binary build for frontend html content
     oc new-build httpd:2.4 --binary=true --name=mega-zep-frontend
     oc set triggers bc/mega-zep-frontend --remove-all
-
-    # Quarkus Build Agent
-    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=quarkus-build-agent --context-dir=docker/agent-quarkus --source-secret=${GIT_SECRET}
-
-    # Nodejs Build Agent
-    oc new-build https://github.com/Gepardec/mega-infrastructure.git#master --name=nodejs-build-agent --context-dir=docker/agent-nodejs --source-secret=${GIT_SECRET}
 }
 
 function deleteBuildConfigs() {
     oc delete bc/mega-zep-backend --ignore-not-found
     oc delete bc/mega-zep-frontend --ignore-not-found
-    oc delete bc/quarkus-build-agent --ignore-not-found
-    oc delete bc/nodejs-build-agent --ignore-not-found
 }
 
 function recreateBuildConfigs() {
@@ -76,11 +68,13 @@ function recreateBuildConfigs() {
 }
 
 function createJenkins {
+    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
 }
 
 function deleteJenkins {
+    oc process -f jenkins/jenkins-agent-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
 }

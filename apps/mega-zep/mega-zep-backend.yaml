@@ -41,7 +41,7 @@ objects:
                   value: "95"
                 - name: JAVA_OPTIONS
                   value: "${JAVA_OPTIONS}"
-              image: ""
+              image: "${IMAGE}"
               imagePullPolicy: Always
               name: "${NAME}"
               ports:
@@ -83,16 +83,6 @@ objects:
               secret:
                 defaultMode: 420
                 secretName: "${SECRET}"
-      triggers:
-        - type: ConfigChange
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - "${NAME}"
-            from:
-              kind: ImageStreamTag
-              name: "${IMAGE_STREAM_TAG}"
-          type: ImageChange
   - apiVersion: v1
     kind: Service
     metadata:
@@ -159,7 +149,5 @@ parameters:
   - name: "SECRET"
     displayName: "The secret providing the configuration"
     required: true
-  - name: "IMAGE_STREAM_TAG"
-    displayName: "The image stream tag to use. E.g.: mega-zep-backend:latest"
-    value: "mega-zep-backend:latest"
-    required: true
+  - name: "IMAGE"
+    value: ""

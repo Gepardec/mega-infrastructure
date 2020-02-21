@@ -35,7 +35,7 @@ objects:
             deploymentconfig: "${NAME}"
         spec:
           containers:
-            - image: " "
+            - image: "${IMAGE}"
               imagePullPolicy: Always
               name: "${NAME}"
               ports:
@@ -63,16 +63,6 @@ objects:
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
-      triggers:
-        - type: ConfigChange
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - "${NAME}"
-            from:
-              kind: ImageStreamTag
-              name: "${IMAGE_STREAM_TAG}"
-          type: ImageChange
   - apiVersion: v1
     kind: Service
     metadata:
@@ -125,7 +115,5 @@ parameters:
   - name: "MEMORY"
     displayName: "The memory count to use. E.g.: 512Mi"
     required: true
-  - name: "IMAGE_STREAM_TAG"
-    displayName: "The image stream tag to use. E.g.: mega-zep-backend:latest"
-    value: "mega-zep-frontend:latest"
-    required: true
+  - name: "IMAGE"
+    value: ""

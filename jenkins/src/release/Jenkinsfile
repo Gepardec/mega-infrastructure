@@ -4,12 +4,14 @@ pipeline {
     agent any
 
     parameters {
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the JEnkinsfile from')
         choice(name: 'sourceEnvironment', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy the image from')
         choice(name: 'targetEnvironment', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy to')
         string(name: 'version', defaultValue: 'latest', description: 'The image version to release', trim: true)
     }
 
     environment {
+        OCP_REGISTRY='docker-registry.default.svc:5000'
         MEGA_PROJECT = "57-mega-"
         SOURCE_PROJECT = "${env.MEGA_PROJECT + params.sourceEnvironment}"
         TARGET_PROJECT = "${env.MEGA_PROJECT + params.targetEnvironment}"
@@ -72,7 +74,7 @@ Image-Tag:      ${params.version}\
                                 openshift.withCluster() {
                                     createServiceResources("mega-zep-frontend", \
                                                            params.targetEnvironment, \
-                                                           "--param=IMAGE_STREAM_TAG='mega-zep-frontend:${params.version}'")
+                                                           "--param=IMAGE='${env.OCP_REGISTRY}/${env.TARGET_PROJECT}/mega-zep-frontend:${params.version}'")
                                 }
                             }
                         }
@@ -89,7 +91,7 @@ Image-Tag:      ${params.version}\
                                     createServiceResources("mega-zep-backend",
                                             params.targetEnvironment,
                                             "--param=JAVA_OPTIONS='-Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}' \
-                                             --param=IMAGE_STREAM_TAG='mega-zep-backend:${params.version}'")
+                                             --param=IMAGE='${env.OCP_REGISTRY}/${env.TARGET_PROJECT}/mega-zep-backend:${params.version}'")
                                 }
                             }
                         }

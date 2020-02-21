@@ -19,23 +19,12 @@ parameters:
     required: true
     
   - name: "GIT_URL"
-    displayName: "Git url"
-    description: "The git url of the repository holding the S2I resources"
     required: true
 
   - name: "GIT_REF"
-    displayName: "Git ref"
-    description: "The git ref of the repository holding the S2I resources"
     required: true
 
   - name: "GIT_SECRET"
-    displayName: "Git source secret"
-    description: "The git source secret for the checkout"
-    required: true
-
-  - name: "APP"
-    displayName: "App label"
-    description: "The value for the label app"
     required: true
 
 objects:
@@ -43,8 +32,6 @@ objects:
     apiVersion: "v1"
     metadata:
       name: "${JENKINS_SERVICE_NAME}-s2i"
-      labels:
-        app: "${APP}"
     spec:
       lookupPolicy:
         local: true
@@ -58,8 +45,6 @@ objects:
     apiVersion: "v1"
     metadata:
       name: "${JENKINS_SERVICE_NAME}-custom"
-      labels:
-        app: "${APP}"
 
   - kind: BuildConfig
     apiVersion: v1
