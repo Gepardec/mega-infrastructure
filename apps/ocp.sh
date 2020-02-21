@@ -78,20 +78,17 @@ function recreateBuildConfigs() {
 function createJenkins {
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
-    oc process -f  jenkins/maven-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
 }
 
 function deleteJenkins {
     oc process -f jenkins/jenkins-bc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
     oc process -f jenkins/jenkins.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
-    oc process -f  jenkins/maven-pvc.yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
 }
 
 function recreateJenkins {
     deleteJenkins
     createJenkins
 }
-
 
 function createJenkinsPvc {
     oc process -f jenkins/jenkins-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
@@ -104,6 +101,20 @@ function deleteJenkinsPvc {
 function recreateJenkinsPvc {
     deleteJenkinsPvc
     createJenkinsPvc
+}
+
+
+function createMavenPvc {
+    oc process -f  jenkins/maven-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
+}
+
+function deleteMavenPvc {
+    oc process -f  jenkins/maven-pvc.yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
+}
+
+function recreateMavenPvc {
+    deleteMavenPvc
+    createMavenPvc
 }
 
 ${1}
