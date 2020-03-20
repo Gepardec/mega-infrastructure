@@ -103,7 +103,7 @@ objects:
             dockerStrategy:
                 from:
                     kind: ImageStreamTag
-                    name: ${OPENJDK_IS}:latest
+                    name: ${JENKINS_SLAVE_BASE_IS}:latest
             type: Docker
         triggers:
             - type: ConfigChange

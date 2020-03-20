@@ -46,6 +46,7 @@ github:1.29.5
 github-api:1.106
 github-branch-source:2.6.0
 github-organization-folder:1.6
+github-oauth:0.33
 google-oauth-plugin:1.0.0
 handlebars:1.1.1
 handy-uri-templates-2-api:2.1.8-1.0

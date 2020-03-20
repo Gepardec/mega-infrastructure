@@ -2,7 +2,10 @@
 FROM docker.io/openshift/jenkins-slave-base-centos7:v3.9
 
 ENV NPM_CONFIG_PREFIX=/npm/.npm-global \
-    PATH=/npm/node_modules/.bin/:/npm/.npm-global/bin:$PATH
+    PATH=/npm/node_modules/.bin/:/npm/.npm-global/bin:$PATH \
+    BASH_ENV=/usr/local/bin/scl_enable \
+    ENV=/usr/local/bin/scl_enable \
+    PROMPT_COMMAND=". /usr/local/bin/scl_enable"
 
 USER root
 
