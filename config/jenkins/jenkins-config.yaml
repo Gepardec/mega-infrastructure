@@ -39,7 +39,15 @@ jobs:
                     scanCredentialsId('github-http')
                     repoOwner('Gepardec')
                     repository('mega')
-                    includes('develop feature/* hotfix/* release/* PR-*')
+                    includes('develop feature/* hotfix/* release/*')
+                    buildOriginBranch(true)
+
+                    // Because of branch not found for PR
+                    buildForkPRHead(false)
+                    buildForkPRMerge(false)
+                    buildOriginBranchWithPR(false)
+                    buildOriginPRHead(false)
+                    buildOriginPRMerge(false)
                 }
             }
             orphanedItemStrategy {
