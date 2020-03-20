@@ -1,10 +1,7 @@
-mega-secrets*.properties
-mega-dev.ssh.key
-mega-dev-http.properties
-google-secrets*.properties
-
-mega-frontend*.properties
-google-secrets*.properties
+/*.properties
+/*.yaml
+/*.yaml
+/*.zip
 
 .idea
 *.iml

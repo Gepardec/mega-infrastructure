@@ -69,6 +69,18 @@ objects:
             value: ${JENKINS_SERVICE_NAME}
           - name: JNLP_SERVICE_NAME
             value: ${JNLP_SERVICE_NAME}
+          - name: "CASC_JENKINS_CONFIG"
+            value: "/jenkins-conf"
+          - name: "EMAIL_USER"
+            valueFrom:
+              secretKeyRef:
+                name: "${JENKINS_SERVICE_NAME}"
+                key: "emailUser"
+          - name: "EMAIL_PWD"
+            valueFrom:
+              secretKeyRef:
+                name: "${JENKINS_SERVICE_NAME}"
+                key: "emailPassword"
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -95,6 +107,8 @@ objects:
           volumeMounts:
           - mountPath: /var/lib/jenkins
             name: ${JENKINS_SERVICE_NAME}-data
+          - name: "${JENKINS_SERVICE_NAME}-conf"
+            mountPath: "/jenkins-conf"
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
@@ -104,6 +118,12 @@ objects:
               medium: ""
 #            persistentVolumeClaim:
 #              claimName: ${JENKINS_PVC_NAME}
+          - name: "${JENKINS_SERVICE_NAME}-conf"
+            configMap:
+              name: "${JENKINS_SERVICE_NAME}-config"
+              items:
+                - key: jenkins-config.yaml
+                  path: ./jenkins-config.yaml
     triggers:
     - imageChangeParams:
         automatic: true

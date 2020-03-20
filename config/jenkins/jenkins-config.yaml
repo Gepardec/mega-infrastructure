@@ -1,0 +1,75 @@
+jenkins:
+    systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+    numExecutors: 10
+    scmCheckoutRetryCount: 2
+    mode: NORMAL
+    authorizationStrategy:
+        projectMatrix:
+          permissions:
+            - "Overall/Read:authenticated"
+            - "Overall/Administer:authenticated"
+unclassified: 
+    location:
+        url: "https://jenkins-57-mega-dev.cloud.itandtel.at"
+        adminAddress: "Jenkins <service@gepardec.com>"
+    mailer:
+        smtpHost: "smtp.gmail.com"
+        smtpPort: 465
+        useSsl: true
+        defaultSuffix: "@gepardec.com"
+        replyToAddress: "noreplay@gepardec.com"
+        authentication: 
+            username: "${EMAIL_USER}"
+            password: "${EMAIL_PWD}"
+        charset: "UTF-8"
+jobs:
+    - script: >
+        multibranchPipelineJob('mega-build') {
+            displayName('Mega-Build')
+            factory {
+                workflowBranchProjectFactory {
+                  scriptPath('jenkins/src/build/Jenkinsfile')
+                }
+            }
+            branchSources {
+                github {
+                    // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
+                    id('mega-build') // IMPORTANT: use a constant and unique identifier
+                    checkoutCredentialsId('github-http')
+                    scanCredentialsId('github-http')
+                    repoOwner('Gepardec')
+                    repository('mega')
+                    includes('develop feature/* hotfix/* release/* PR-*')
+                }
+            }
+            orphanedItemStrategy {
+                discardOldItems {
+                    numToKeep(1)
+                }
+            }
+            triggers {
+                periodic(5)
+            }
+        }
+
+    - script: >
+        pipelineJob('mega-release') {
+            parameters {
+                stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+            }
+            definition {
+                cpsScm {
+                    lightweight(false)
+                    scriptPath('jenkins/src/release/Jenkinsfile')
+                    scm {
+                        git {
+                            branch('^${Branch}')
+                            remote {
+                                url('https://github.com/Gepardec/mega-infrastructure.git')
+                                credentials('github-http')
+                            }
+                        }
+                    }
+                }
+            }
+        }

@@ -24,22 +24,23 @@ function createJenkinsSecrets {
     oc annotate secret mega-secrets jenkins.openshift.io/secret.name=mega-secrets
     oc label secret mega-secrets credential.sync.jenkins.openshift.io=true
 
-    # Create git ssh secret
-    oc create secret generic mega-git-ssh --from-file=ssh-privatekey=../mega-dev.ssh.key --type=kubernetes.io/ssh-auth
-    oc annotate secret mega-git-ssh jenkins.openshift.io/secret.name=mega-git-ssh
-    oc label secret mega-git-ssh credential.sync.jenkins.openshift.io=true
-    oc secrets link builder mega-git-ssh
-
     # Create git http secret (Necessary for multibranch plugin)
-    oc create secret generic mega-git-http --from-env-file=../mega-dev-http.properties --type=kubernetes.io/basic-auth
-    oc annotate secret mega-git-http jenkins.openshift.io/secret.name=mega-git-http
-    oc label secret mega-git-http credential.sync.jenkins.openshift.io=true
+    oc create secret generic github-http --from-env-file=../mega-dev-http.properties --type=kubernetes.io/basic-auth
+    oc annotate secret github-http jenkins.openshift.io/secret.name=github-http
+    oc label secret github-http credential.sync.jenkins.openshift.io=true
+
+    # Create jenkins-config-secret
+    oc create configmap jenkins-config --from-file=jenkins-config.yaml=../config/jenkins/jenkins-config.yaml
+    
+    # Create jenkins-config-secret
+    oc create secret generic jenkins --from-env-file=../jenkins-secrets.properties --type=kubernetes.io/opaque
 }
 
 function deleteJenkinsSecrets {
     oc delete secrets/mega-secrets --ignore-not-found
-    oc delete secrets/mega-git-ssh --ignore-not-found
-    oc delete secrets/mega-git-http --ignore-not-found
+    oc delete secrets/github-http --ignore-not-found
+    oc delete configmap/jenkins-config --ignore-not-found
+    oc delete secrets/jenkins --ignore-not-found
 }
 
 function recreateJenkinsSecrets {
