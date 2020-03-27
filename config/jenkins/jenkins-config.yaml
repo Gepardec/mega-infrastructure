@@ -45,7 +45,7 @@ jobs:
                     // Because of branch not found for PR
                     buildForkPRHead(false)
                     buildForkPRMerge(false)
-                    buildOriginBranchWithPR(false)
+                    buildOriginBranchWithPR(true)
                     buildOriginPRHead(false)
                     buildOriginPRMerge(false)
                 }
