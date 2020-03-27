@@ -1,27 +1,72 @@
-= MEGA
+= MEGA-Infrastructure
 
-Make End-of-the-month-process Great Again!
+The MEGA infrastructure project.
+
+== Infrastructure
+
+The MEGA Project is hosted in Openshift and split to the following 3 stages (Openshift Projects):
+
+. ``mega-dev`` +
+ The development stage, where usually the current ``develop`` state is deployed on.
+. ``mega-test`` +
+ The test environment where the acceptance tests are performed
+. ``mega-prod`` +
+ The production system of the MEGA Project
+
+The cited image illustrates the system of the MEGA Project, its involved services, interactions and zones. Each zone is protected by OAuth whereby each zone uses its own ``clientId``.
+
+.Mega System
+image::/doc/images/mega-system.png[]
 
 == Prerequisites
+
 
 === Google OAuth2 client setup
 
 See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
 
-== Dockerfiles
+== Project Resources
 
-These are the Dockerfiles used by this project
+=== Dockerfiles
 
-* link:docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile] +
+The cited Dockerfiles are used to build the jenkins build agents for the MEGA Project. 
+
+* ``link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile]`` +
  The Dockerfile for building the nodejs build agent
-* link:docker/agent-quarkus/Dockerfile[agent-quarkus/Dockerfile] +
- The Dockerfile for building the quarkus build agent
+* ``link:/docker/agent-jdk/Dockerfile[agent-jdk/Dockerfile]`` +
+ The Dockerfile for building the OpenJDK build agent
 
-== Configuration files
+=== S2I 
 
-For the secret creation the following config files are expected
+We use a custom Jenkins which is based on the official Openshift-Jenkins-Image and 
+which is build via the S2I mechanism.
 
-. mega-secrets.<STAGE>.properties
+* ``link:/s2i/jenkins[s2i/jenkins]`` +
+  The directory holding the s2i sources
+* ``link:/s2i/jenkins/plugins.txt[s2i/jenkins/plugins.txt]`` +
+  The plugins.txt which defines the plugins and plugins version the Mega Jenkins uses
+
+=== Configuration files
+
+==== Jenkins
+
+Jenkins is configured via the link:https://jenkins.io/projects/jcasc/[configureation-as-code] plugin which allows to configure Jenkins via YAML config files.
+
+* ``link:/config/jenkins/jenkins-config.yaml[/config/jenkins/jenkins-config.yaml]`` +
+  The YAML configuration file which configures the Jenkins instance and the MEGA Job Definitions
+
+TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift. Because there are no secrets, this configuration file is part of the repository
+
+==== MEGA
+
+Configurations for MEGA are provided via properties files, which contain secrets and therefore need to be provided manually. Each used stage needs its own configuration file to separate the configurations per stage. 
+
+* ``mega-secrets.<STAGE>.properties``
+
+TIP: See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
+
+
+// --------------------------------------------------------------------------------
 
 == Openshift Dev Project
 
