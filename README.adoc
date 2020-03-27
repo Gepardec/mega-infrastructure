@@ -24,7 +24,7 @@ image::/doc/images/mega-system.png[]
 
 The cited Dockerfiles are used to build the jenkins build agents for the MEGA Project. 
 
-* link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile]` +
+* link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile] +
 The Dockerfile for building the nodejs build agent.
 * link:/docker/agent-jdk/Dockerfile[agent-jdk/Dockerfile] +
 The Dockerfile for building the OpenJDK build agent.
@@ -92,7 +92,7 @@ The git repository url for the Jenkins related Openshift Build Configurations
 . ``GIT_REF=master`` +
 The git reference used for the Jenkins related Openshift Build Configurations 
 . ``GIT_SECRET=github-http`` +
-The name of the Openshift secret providing the Openshift Secret of type ````
+The name of the Openshift secret providing the Openshift Secret of type ``kubernetes.io/basic-auth``
 . ``MAVEN_VERSION=3.6.1`` +
 The Maven version used by the JDK build agent Container Image
 . ``MEMORY_LIMIT=2Gi`` +
