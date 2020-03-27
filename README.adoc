@@ -186,7 +186,7 @@ oc apps/ocp.sh deleteBuildConfigs
 oc apps/ocp.sh recreateBuildConfigs
 ----
 
-.Jenkins
+.Jenkins Application
 [source,bash]
 ----
 # Create jenkins
@@ -197,6 +197,24 @@ oc apps/ocp.sh deleteJenkins
 
 # Delete/Create jenkins
 oc apps/ocp.sh recreateJenkins
+
+# Create jenkins pvc
+oc apps/ocp.sh createJenkinsPvc
+
+# Delete jenkins pvc
+oc apps/ocp.sh deleteJenkinsPvc
+
+# Delete/Create jenkins pvc
+oc apps/ocp.sh recreateJenkinsPvc
+
+# Create maven pvc
+oc apps/ocp.sh createMavenPvc
+
+# Delete maven pvc
+oc apps/ocp.sh deleteMavenPvc
+
+# Delete/Create maven pvc
+oc apps/ocp.sh recreateMavenPvc
 ----
 
 IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars in ``apps/ocp.sh`` are properly setup for your needs.
@@ -206,7 +224,8 @@ IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars
 .Secrets
 [source,bash]
 ----
-oc create secret generic mega-secrets --from-file=filename=mega-secrets.properties
+# Create secrets
+STAGE=[dev|prod|test] oc apps/ocp.sh createMegaSecrets
 ----
 
-IMPORTANT: Ensure that the configuration is properly setup for your environment
+IMPORTANT: Ensure that the configuration is properly setup for the selected stage and that you have set the proper project context
