@@ -79,6 +79,25 @@ The Openshift Template holding the definition for the persistence storage for th
 . link:/apps/jenkins/jenkins.properties[/apps/jenkins/jenkins.properties] +
 The properties file holding the values for the ``jenkins.yaml`` Openshift Template defined parameters.
 
+The Jenkins Openshift Templates can be configured via the cited configuration properties.
+
+. ``JENKINS_SERVICE_NAME=jenkins`` +
+The name used for the Jenkins service and Openshift Resources
+. ``JENKINS_S2I_IMAGE=docker.io/openshift/jenkins-2-centos7:v3.11``
+The image the custom Jenkins Build is based on
+. ``JENKINS_IMAGE_STREAM_TAG=jenkins-custom:latest`` +
+The name of the Openshift image Stream for the custom Jenkins Build Container Images
+. ``GIT_URL=https://github.com/Gepardec/mega-infrastructure.git`` +
+The git repository url for the Jenkins related Openshift Build Configurations
+. ``GIT_REF=master`` +
+The git reference used for the Jenkins related Openshift Build Configurations 
+. ``GIT_SECRET=github-http`` +
+The name of the Openshift secret providing the Openshift Secret of type ````
+. ``MAVEN_VERSION=3.6.1`` +
+The Maven version used by the JDK build agent Container Image
+. ``MEMORY_LIMIT=2Gi`` +
+The Jenkins Service assgined RAM
+
 === MEGA
 
 The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized andwhereby the parameter values are provided via properties files. +
@@ -92,7 +111,7 @@ The ``backend`` Openshift Template
 * ``link:/apps/mega-zep:[mega-zep-frontend.<STAGE>.properties]`` +
 The staged ``frontend`` configuration sfile
 
-The ``backend`` can be configured with the following configuration properties. 
+The ``backend`` can be configured via the cited configuration properties. 
 
 * ``APP=mega-zep`` +
 The value for the app label, which is add to each created Openshift Resource 
@@ -105,7 +124,7 @@ The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
 The assigned RAM resources to the services
 
-The ``frontend`` can be configured with the following configuration properties. 
+The ``frontend`` can be configured via the cited configuration properties. 
 
 * ``APP=mega-zep`` +
 The value for the app label, which is add to each created Openshift Resource 
@@ -123,13 +142,20 @@ The cited ``Jenkinsfiles`` are provided by this repository.
 * link:/jenkins/src/release/Jenkinsfile[/jenkins/src/release/Jenkinsfile] +
 The release pipeline which releases a MEGA version to a specific stage.
 
+== Scripts
+
+The cited scripts are provided by this repository.
+
+* link:/apps/ocp.sh[/apps/ocp.sh] +
+This scripts holds functions which can be used to managed Jenkins and Jenkins related resources.
+
 == Setup
 
 === Google OAuth2 client setup
 
 Each stage uses its own OAuth clientId/clientSecret and therefore each stages ahs to be setup in Google. See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
 
-== Openshift Dev Project
+=== Openshift Dev Project
 
 .Secrets
 [source,bash]
