@@ -18,13 +18,6 @@ The cited image illustrates the system of the MEGA Project, its involved service
 .Mega System
 image::/doc/images/mega-system.png[]
 
-== Prerequisites
-
-
-=== Google OAuth2 client setup
-
-See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
-
 == Project Resources
 
 === Dockerfiles
@@ -37,6 +30,8 @@ The cited Dockerfiles are used to build the jenkins build agents for the MEGA Pr
  The Dockerfile for building the OpenJDK build agent
 
 === S2I 
+
+==== Jenkins S2i
 
 We use a custom Jenkins which is based on the official Openshift-Jenkins-Image and 
 which is build via the S2I mechanism.
@@ -55,7 +50,7 @@ Jenkins is configured via the link:https://jenkins.io/projects/jcasc/[configurea
 * ``link:/config/jenkins/jenkins-config.yaml[/config/jenkins/jenkins-config.yaml]`` +
   The YAML configuration file which configures the Jenkins instance and the MEGA Job Definitions
 
-TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift. Because there are no secrets, this configuration file is part of the repository
+TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift. Because the configuration files doesn't contain any secrets, this configuration file is part of the repository.
 
 ==== MEGA
 
@@ -65,8 +60,48 @@ Configurations for MEGA are provided via properties files, which contain secrets
 
 TIP: See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
 
+== Openshift Templates
 
-// --------------------------------------------------------------------------------
+The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized andwhereby the parameter values are provided via properties files. +
+
+* ``link:/apps/mega-zep/mega-zep-backend.yaml:[mega-zep-backend.yaml]`` +
+The ``backend`` Openshift Template
+* ``link:/apps/mega-zep:[mega-zep-backend.<STAGE>.properties]`` +
+The staged ``backend`` configuration sfile
+* ``link:/apps/mega-zep/mega-zep-frontend.yaml:[mega-zep-frontend.yaml]`` +
+The ``backend`` Openshift Template
+* ``link:/apps/mega-zep:[mega-zep-frontend.<STAGE>.properties]`` +
+The staged ``frontend`` configuration sfile
+
+The ``backend`` can be configured with the following configuration properties. 
+
+* ``APP=mega-zep`` +
+The value for the app label, which is add to each created Openshift Resource 
+* ``NAME=mega-zep-backend`` +
+The value for the service and created Openshift Resources
+* ``SECRET=mega-secrets`` +
+The name of the secret holding the MEGA configurations for the specific stage
+* ``CPU=500m`` +
+The assigned CPU resources to the service
+* ``MEMORY=256Mi`` +
+The assigned RAM resources to the services
+
+The ``frontend`` can be configured with the following configuration properties. 
+
+* ``APP=mega-zep`` +
+The value for the app label, which is add to each created Openshift Resource 
+* ``NAME=mega-zep-frontend`` +
+The value for the service and created Openshift Resources
+* ``CPU=500m`` +
+The assigned CPU resources to the service
+* ``MEMORY=256Mi`` +
+The assigned RAM resources to the services
+
+== Setup
+
+=== Google OAuth2 client setup
+
+Each stage uses its own OAuth clientId/clientSecret and therefore each stages ahs to be setup in Google. See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
 
 == Openshift Dev Project
 
