@@ -199,16 +199,16 @@ Each stage uses its own OAuth clientId/clientSecret and therefore each stages ha
 [source,bash]
 ----
 # Create secrets
-STAGE=[dev|prod|test] oc apps/ocp.sh createMegaSecrets
-STAGE=[dev|prod|test] oc apps/ocp.sh createJenkinsSecrets
+STAGE=dev oc apps/ocp.sh createMegaSecrets
+oc apps/ocp.sh createJenkinsSecrets
 
 # Delete secrets
 oc apps/ocp.sh deleteMegaSecrets
 oc apps/ocp.sh deleteJenkinsSecrets
 
 # Delete/Create secrets
-STAGE=[dev|prod|test] oc apps/ocp.sh recreateMegaSecrets
-STAGE=[dev|prod|test] oc apps/ocp.sh recreateJenkinsSecrets
+STAGE=dev oc apps/ocp.sh recreateMegaSecrets
+oc apps/ocp.sh recreateJenkinsSecrets
 ----
 
 .Build Configurations
@@ -263,7 +263,7 @@ IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars
 [source,bash]
 ----
 # Create secrets
-STAGE=[dev|prod|test] oc apps/ocp.sh createMegaSecrets
+STAGE=[prod|test] oc apps/ocp.sh createMegaSecrets
 ----
 
 IMPORTANT: Ensure that the configuration is properly setup for the selected stage and that you have set the proper project context
