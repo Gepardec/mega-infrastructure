@@ -21,11 +21,11 @@ function recreateMegaSecrets {
 function createJenkinsSecrets {
     # Create mega secret for service and jenkins
     oc create secret generic jenkins-mega-secrets --from-file=filename=../mega-secrets.jenkins.properties
-    oc annotate secret jenkins-mega-secrets jenkins.openshift.io/secret.name=mega-secrets
+    oc annotate secret jenkins-mega-secrets jenkins.openshift.io/secret.name=jenkins-mega-secrets
     oc label secret jenkins-mega-secrets credential.sync.jenkins.openshift.io=true
 
     # Create git http secret (Necessary for multibranch plugin)
-    oc create secret generic github-http --from-env-file=../mega-dev-http.properties --type=kubernetes.io/basic-auth
+    oc create secret generic github-http --from-env-file=../git-http.properties --type=kubernetes.io/basic-auth
     oc annotate secret github-http jenkins.openshift.io/secret.name=github-http
     oc label secret github-http credential.sync.jenkins.openshift.io=true
 
