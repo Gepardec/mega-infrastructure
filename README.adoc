@@ -56,7 +56,11 @@ TIP: The YAML configuration file references secrets via environment variables, w
 
 The configuration for MEGA is provided via a properties file. Each used stage needs its own configuration file to separate the configurations per stage. 
 
-* ``mega-secrets.<STAGE>.properties``
+* ``mega-secrets.<STAGE>.properties`` +
+The staged configuration file
+* ``mega-secrets.jenkins.properties`` +
+The configuration file used by Jenkins for the builds
+
 
 TIP: The configurations must be provided manually. See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
 
@@ -100,16 +104,16 @@ The Jenkins Service assgined RAM
 
 === MEGA
 
-The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized andwhereby the parameter values are provided via properties files. +
+The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized and whereby the parameter values are provided via properties files. +
 
 * ``link:/apps/mega-zep/mega-zep-backend.yaml:[mega-zep-backend.yaml]`` +
 The ``backend`` Openshift Template
 * ``link:/apps/mega-zep:[mega-zep-backend.<STAGE>.properties]`` +
-The staged ``backend`` configuration sfile
+The staged ``backend`` configuration file
 * ``link:/apps/mega-zep/mega-zep-frontend.yaml:[mega-zep-frontend.yaml]`` +
 The ``backend`` Openshift Template
 * ``link:/apps/mega-zep:[mega-zep-frontend.<STAGE>.properties]`` +
-The staged ``frontend`` configuration sfile
+The staged ``frontend`` configuration file
 
 The ``backend`` can be configured via the cited configuration properties. 
 
@@ -153,7 +157,7 @@ This scripts holds functions which can be used to managed Jenkins and Jenkins re
 
 === Google OAuth2 client setup
 
-Each stage uses its own OAuth clientId/clientSecret and therefore each stages ahs to be setup in Google. See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
+Each stage uses its own OAuth clientId/clientSecret and therefore each stages has to be setup in Google. See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
 
 === Openshift Dev Project
 
