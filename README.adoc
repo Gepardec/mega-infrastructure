@@ -7,11 +7,11 @@ The MEGA infrastructure project.
 The MEGA Project is hosted in Openshift and split to the following 3 stages (Openshift Projects):
 
 . ``mega-dev`` +
- The development stage, where usually the current ``develop`` state is deployed on.
+The development stage, where usually the current ``develop`` state is deployed on.
 . ``mega-test`` +
- The test environment where the acceptance tests are performed
+The test environment where the acceptance tests are performed.
 . ``mega-prod`` +
- The production system of the MEGA Project
+The production system of the MEGA Project.
 
 The cited image illustrates the system of the MEGA Project, its involved services, interactions and zones. Each zone is protected by OAuth whereby each zone uses its own ``clientId``.
 
@@ -24,10 +24,10 @@ image::/doc/images/mega-system.png[]
 
 The cited Dockerfiles are used to build the jenkins build agents for the MEGA Project. 
 
-* ``link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile]`` +
- The Dockerfile for building the nodejs build agent
-* ``link:/docker/agent-jdk/Dockerfile[agent-jdk/Dockerfile]`` +
- The Dockerfile for building the OpenJDK build agent
+* link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile]` +
+The Dockerfile for building the nodejs build agent.
+* link:/docker/agent-jdk/Dockerfile[agent-jdk/Dockerfile] +
+The Dockerfile for building the OpenJDK build agent.
 
 === S2I 
 
@@ -36,10 +36,10 @@ The cited Dockerfiles are used to build the jenkins build agents for the MEGA Pr
 We use a custom Jenkins which is based on the official Openshift-Jenkins-Image and 
 which is build via the S2I mechanism.
 
-* ``link:/s2i/jenkins[s2i/jenkins]`` +
-  The directory holding the s2i sources
-* ``link:/s2i/jenkins/plugins.txt[s2i/jenkins/plugins.txt]`` +
-  The plugins.txt which defines the plugins and plugins version the Mega Jenkins uses
+* link:/s2i/jenkins[s2i/jenkins] +
+The directory holding the s2i sources.
+* link:/s2i/jenkins/plugins.txt[s2i/jenkins/plugins.txt] +
+The plugins.txt which defines the plugins and plugins version the Mega Jenkins uses.
 
 === Configuration files
 
@@ -47,20 +47,39 @@ which is build via the S2I mechanism.
 
 Jenkins is configured via the link:https://jenkins.io/projects/jcasc/[configureation-as-code] plugin which allows to configure Jenkins via YAML config files.
 
-* ``link:/config/jenkins/jenkins-config.yaml[/config/jenkins/jenkins-config.yaml]`` +
-  The YAML configuration file which configures the Jenkins instance and the MEGA Job Definitions
+* link:/config/jenkins/jenkins-config.yaml[/config/jenkins/jenkins-config.yaml] +
+The YAML configuration file which configures the Jenkins instance and the MEGA Job Definitions.
 
 TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift. Because the configuration files doesn't contain any secrets, this configuration file is part of the repository.
 
 ==== MEGA
 
-Configurations for MEGA are provided via properties files, which contain secrets and therefore need to be provided manually. Each used stage needs its own configuration file to separate the configurations per stage. 
+The configuration for MEGA is provided via a properties file. Each used stage needs its own configuration file to separate the configurations per stage. 
 
 * ``mega-secrets.<STAGE>.properties``
 
-TIP: See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
+TIP: The configurations must be provided manually. See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
 
 == Openshift Templates
+
+=== Jenkins
+
+For the Jenkins service we use multiple Openshift Templates which are used to define an part of the Jenkins service and its dependencies.
+
+. link:/apps/jenkins/jenkins.yaml[/apps/jenkins/jenkins.yaml] +
+The Jenkins Openshift Template defining the Jenkins service.
+. link:/apps/jenkins/jenkins-agent-bc.yaml[/apps/jenkins/jenkins-agent-bc.yaml] +
+The Openshift Template holding the definitions of the by agents used  Container Images and Openshift Build Configurations.  
+. link:/apps/jenkins/jenkins-bc.yaml[/apps/jenkins/jenkins-bc.yaml] +
+The Openshift Template holding the Openshift Build Configurations for the custom Jenkins build.   
+. link:/apps/jenkins/jenkins-pvc.yaml[/apps/jenkins/jenkins-pvc.yaml] +
+The Openshift Template holding the definition for the persistence storage of Jenkins in Openshift.
+. link:/apps/jenkins/maven-pvc.yaml[/apps/jenkins/maven-pvc.yaml] +
+The Openshift Template holding the definition for the persistence storage for the caching of the maven repository used by the build agents.
+. link:/apps/jenkins/jenkins.properties[/apps/jenkins/jenkins.properties] +
+The properties file holding the values for the ``jenkins.yaml`` Openshift Template defined parameters.
+
+=== MEGA
 
 The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized andwhereby the parameter values are provided via properties files. +
 
@@ -96,6 +115,13 @@ The value for the service and created Openshift Resources
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
 The assigned RAM resources to the services
+
+== Pipelines
+
+The cited ``Jenkinsfiles`` are provided by this repository.
+
+* link:/jenkins/src/release/Jenkinsfile[/jenkins/src/release/Jenkinsfile] +
+The release pipeline which releases a MEGA version to a specific stage.
 
 == Setup
 
