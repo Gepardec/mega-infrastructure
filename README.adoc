@@ -127,6 +127,8 @@ The name of the secret holding the MEGA configurations for the specific stage
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
 The assigned RAM resources to the services
+* ``TIMEZONE=Europe/Vienna`` +
+The timezone to set on the container
 
 The ``frontend`` can be configured via the cited configuration properties. 
 
@@ -138,6 +140,8 @@ The value for the service and created Openshift Resources
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
 The assigned RAM resources to the services
+* ``TIMEZONE=Europe/Vienna`` +
+The timezone to set on the container
 
 == Pipelines
 

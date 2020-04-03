@@ -4,21 +4,6 @@ cd $(pwd)
 
 set -u
 
-function createMega {
-    oc process -f mega-zep/mega-zep-frontend.yaml -o yaml --param-file=mega-zep/mega-zep-frontend.${STAGE}.yaml --ignore-unknown-parameters=true | oc apply -f -
-    oc process -f mega-zep/mega-zep-backend.yaml -o yaml --param-file=mega-zep/mega-zep-backend.${STAGE}.yaml --ignore-unknown-parameters=true | oc apply -f -
-}
-
-function deleteMega {
-    oc process -f mega-zep/mega-zep-frontend.yaml -o yaml --param-file=mega-zep/mega-zep-frontend.${STAGE}.yaml --ignore-unknown-parameters=true | oc delete -f -
-    oc process -f mega-zep/mega-zep-backend.yaml -o yaml --param-file=mega-zep/mega-zep-backend.${STAGE}.yaml --ignore-unknown-parameters=true | oc delete -f -
-}
-
-function recreateMega {
-    deleteMega
-    createMega
-}
-
 function createMegaSecrets {
     oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
 }
