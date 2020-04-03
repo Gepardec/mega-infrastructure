@@ -267,3 +267,11 @@ STAGE=[prod|test] oc apps/ocp.sh createMegaSecrets
 ----
 
 IMPORTANT: Ensure that the configuration is properly setup for the selected stage and that you have set the proper project context
+
+== Know Issues
+
+=== Jenkins Pipeline 
+
+==== First Repository Scan cannot consume credential
+
+After Jenkins has newly deployed the build pipelines tries to scan the github repository for branches whereby it cannot consume the assigend credential the firt time the scan is executed. Therefore, after a deployment you need to skip the first execution of the scan and restart it. The second time the crednetial is consume correctly.  
