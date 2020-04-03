@@ -10,7 +10,7 @@ ENV NPM_CONFIG_PREFIX=/npm/.npm-global \
 RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash - \
     && yum install -y gcc c++ make nodejs-12.5.0 \
     && npm install -g @angular/cli \
-    && wget --show-progress https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
     && yum -y install google-chrome-stable_current_x86_64.rpm \
     && rm -f google-chrome-stable_current_x86_64.rpm \
     && yum clean all -y \
