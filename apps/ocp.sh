@@ -1,6 +1,5 @@
 #!/bin/bash
 
-GIT_SECRET='mega-git-ssh'
 cd $(pwd)
 
 set -u
