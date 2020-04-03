@@ -81,6 +81,14 @@ objects:
               secretKeyRef:
                 name: "${JENKINS_SERVICE_NAME}"
                 key: "emailPassword"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['name']
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:

@@ -10,8 +10,8 @@ jenkins:
             - "Overall/Administer:authenticated"
 unclassified: 
     location:
-        url: "https://jenkins-57-mega-dev.cloud.itandtel.at"
-        adminAddress: "Jenkins <service@gepardec.com>"
+        url: "https://${POD_NAME}-${POD_NAMESPACE}.cloud.itandtel.at"
+        adminAddress: "Jenkins <${EMAIL_USER}>"
     mailer:
         smtpHost: "smtp.gmail.com"
         smtpPort: 465
