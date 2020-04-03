@@ -5,10 +5,7 @@ ENV HOME=/home/jagent \
     MAVEN_HOME=/maven \
     M2_HOME=/maven  \
     PATH=/openjdk-11/bin:/maven/bin:${PATH} \
-    JAVA_HOME=/openjdk-11 \
-    BASH_ENV=/usr/local/bin/scl_enable \
-    ENV=/usr/local/bin/scl_enable \
-    PROMPT_COMMAND=". /usr/local/bin/scl_enable"
+    JAVA_HOME=/openjdk-11
 
 USER root
 
