@@ -36,6 +36,9 @@ objects:
         spec:
           containers:
             - image: "${IMAGE}"
+              env:
+                - name: TZ
+                  value: "${TIMEZONE}"
               imagePullPolicy: Always
               name: "${NAME}"
               ports:
@@ -117,3 +120,5 @@ parameters:
     required: true
   - name: "IMAGE"
     value: ""
+  - name: "TIMEZONE"
+    required: true

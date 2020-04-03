@@ -41,6 +41,8 @@ objects:
                   value: "95"
                 - name: JAVA_OPTIONS
                   value: "${JAVA_OPTIONS}"
+                - name: TZ
+                  value: "${TIMEZONE}"
               image: "${IMAGE}"
               imagePullPolicy: Always
               name: "${NAME}"
@@ -151,3 +153,5 @@ parameters:
     required: true
   - name: "IMAGE"
     value: ""
+  - name: "TIMEZONE"
+    required: true
