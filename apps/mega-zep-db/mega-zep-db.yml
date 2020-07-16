@@ -1,0 +1,176 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "mega-db"
+  annotations:
+    openshift.io/display-name: "MEGA-DB"
+    description: "The MEGA DB"
+
+objects:
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: "${NAME}-${VERSION}-db"
+      labels:
+        app: "${APP}"
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_SIZE}
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: "${NAME}-db"
+      labels:
+        app: "${APP}"
+    spec:
+      strategy:
+        type: Recreate
+        recreateParams:
+          mid:
+            failurePolicy: Retry
+            execNewPod:
+              containerName: "${NAME}-db"
+              command:
+                - "/bin/bash"
+                - "-c"
+                - "rm -rf /var/lib/pgsql/data/userdata/postmaster.pid"
+              volumes:
+                - "${NAME}-db"
+      replicas: "1"
+      selector:
+        name: "${NAME}-db"
+      triggers:
+        - type: "ConfigChange"
+        - type: "ImageChange"
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${NAME}-db"
+            from:
+              kind: "ImageStreamTag"
+              name: "postgresql:${VERSION}"
+      template:
+        metadata:
+          labels:
+            name: "${NAME}-db"
+          name: "${NAME}-db"
+        spec:
+          containers:
+            - name: "${NAME}-db"
+              image: " "
+              env:
+                - name: "POSTGRESQL_USER"
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${SECRET}
+                      key: db.username
+                - name: "PGPASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${SECRET}
+                      key: db.password
+                - name: "POSTGRESQL_PASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${SECRET}
+                      key: db.password
+                - name: "POSTGRESQL_DATABASE"
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${SECRET}
+                      key: db.name
+                - name: "POSTGRESQL_ADMIN_PASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${SECRET}
+                      key: db.admin.password
+                - name: "POSTGRESQL_MAX_CONNECTIONS"
+                  value: "${DATABASE_MAX_CONNECTIONS}"
+                - name: "POSTGRESQL_SHARED_BUFFERS"
+                  value: "${DATABASE_SHARED_BUFFERS}"
+                - name: "PGCTLTIMEOUT"
+                  value: "${PGCTLTIMEOUT}"
+                - name: "TZ"
+                  value: "${TIMEZONE}"
+              ports:
+                - containerPort: 5432
+              readinessProbe:
+                exec:
+                  command:
+                  - /bin/sh
+                  - -i
+                  - -c
+                  - psql -h localhost -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'
+                successThreshold: 1
+                failureThreshold: 5
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                timeoutSeconds: 5
+              resources:
+                requests:
+                  memory: "${MEMORY}"
+                  cpu: "${CPU}"
+                limits:
+                  memory: "${MEMORY}"
+                  cpu: "${CPU}"
+              volumeMounts:
+                - name: ${NAME}-db
+                  mountPath: /var/lib/pgsql/data
+          volumes:
+            - name: ${NAME}-db
+              persistentVolumeClaim:
+                claimName: ${NAME}-${VERSION}-db
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      annotations:
+        description: "Exposes the database server"
+      name: ${NAME}-db
+      labels:
+        app: ${NAME}
+    spec:
+      selector:
+        name: ${NAME}-db
+      ports:
+        - name: postgresql
+          port: 5432
+          targetPort: 5432
+
+parameters:
+  - name: "APP"
+    required: true
+
+  - name: "NAME"
+    required: true
+
+  - name: "DATABASE_MAX_CONNECTIONS"
+    required: true
+
+  - name: "DATABASE_SHARED_BUFFERS"
+    required: true
+
+  - name: "CPU"
+    required: true
+
+  - name: "MEMORY"
+    required: true
+
+  - name: "VOLUME_SIZE"
+    required: true
+
+  - name: "VERSION"
+    required: true
+
+  - name: "SECRET"
+    required: true
+
+  - name: "PGCTLTIMEOUT"
+    required: true
+
+  - name: "TIMEZONE"
+    required: true

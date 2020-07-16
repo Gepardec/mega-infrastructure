@@ -1,0 +1,23 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "mega-zep-db-pvc"
+
+parameters:
+  - name: "NAME"
+    required: true
+
+  - name: "VERSION"
+    required: true
+
+objects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: "${NAME}-${VERSION}"
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 1Gi

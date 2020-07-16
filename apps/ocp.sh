@@ -6,10 +6,12 @@ set -u
 
 function createMegaSecrets {
     oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
+    oc create secret generic mega-db --from-file=filename=../mega-db.${STAGE}.properties
 }
 
 function deleteMegaSecrets {
     oc delete secret mega-secrets --ignore-not-found
+    oc delete secret mega-db --ignore-not-found
 }
 
 function recreateMegaSecrets {
@@ -99,13 +101,25 @@ function recreateJenkinsPvc {
     createJenkinsPvc
 }
 
-
 function createMavenPvc {
     oc process -f  jenkins/maven-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
 }
 
 function deleteMavenPvc {
     oc process -f  jenkins/maven-pvc.yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc delete -f -
+}
+
+function createMegaDbIs {
+
+}
+
+function deleteMegaDbIs {
+
+}
+
+function recreateMegaDbIs {
+  deleteMegaDbIs
+  createMegaDbIs
 }
 
 function recreateMavenPvc {
