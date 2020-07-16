@@ -7,23 +7,10 @@ metadata:
     description: "The MEGA DB"
 
 objects:
-  - kind: PersistentVolumeClaim
-    apiVersion: v1
-    metadata:
-      name: "${NAME}-${VERSION}-db"
-      labels:
-        app: "${APP}"
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: ${VOLUME_SIZE}
-
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: "${NAME}-db"
+      name: "${NAME}"
       labels:
         app: "${APP}"
     spec:
@@ -33,34 +20,34 @@ objects:
           mid:
             failurePolicy: Retry
             execNewPod:
-              containerName: "${NAME}-db"
+              containerName: "${NAME}"
               command:
                 - "/bin/bash"
                 - "-c"
                 - "rm -rf /var/lib/pgsql/data/userdata/postmaster.pid"
               volumes:
-                - "${NAME}-db"
+                - "${NAME}"
       replicas: "1"
       selector:
-        name: "${NAME}-db"
+        name: "${NAME}"
       triggers:
         - type: "ConfigChange"
         - type: "ImageChange"
           imageChangeParams:
             automatic: true
             containerNames:
-              - "${NAME}-db"
+              - "${NAME}"
             from:
               kind: "ImageStreamTag"
               name: "postgresql:${VERSION}"
       template:
         metadata:
           labels:
-            name: "${NAME}-db"
-          name: "${NAME}-db"
+            name: "${NAME}"
+          name: "${NAME}"
         spec:
           containers:
-            - name: "${NAME}-db"
+            - name: "${NAME}"
               image: " "
               env:
                 - name: "POSTGRESQL_USER"
@@ -118,24 +105,24 @@ objects:
                   memory: "${MEMORY}"
                   cpu: "${CPU}"
               volumeMounts:
-                - name: ${NAME}-db
+                - name: ${NAME}
                   mountPath: /var/lib/pgsql/data
           volumes:
-            - name: ${NAME}-db
+            - name: ${NAME}
               persistentVolumeClaim:
-                claimName: ${NAME}-${VERSION}-db
+                claimName: ${PVC}
 
   - kind: Service
     apiVersion: v1
     metadata:
       annotations:
         description: "Exposes the database server"
-      name: ${NAME}-db
+      name: ${NAME}
       labels:
         app: ${NAME}
     spec:
       selector:
-        name: ${NAME}-db
+        name: ${NAME}
       ports:
         - name: postgresql
           port: 5432
@@ -160,13 +147,13 @@ parameters:
   - name: "MEMORY"
     required: true
 
-  - name: "VOLUME_SIZE"
-    required: true
-
   - name: "VERSION"
     required: true
 
   - name: "SECRET"
+    required: true
+
+  - name: "PVC"
     required: true
 
   - name: "PGCTLTIMEOUT"

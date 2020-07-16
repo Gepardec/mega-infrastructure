@@ -6,12 +6,12 @@ set -u
 
 function createMegaSecrets {
     oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
-    oc create secret generic mega-db --from-file=filename=../mega-db.${STAGE}.properties
+    oc create secret generic mega-zep-db --from-env-file=../mega-zep-db.${STAGE}.properties
 }
 
 function deleteMegaSecrets {
     oc delete secret mega-secrets --ignore-not-found
-    oc delete secret mega-db --ignore-not-found
+    oc delete secret mega-zep-db --ignore-not-found
 }
 
 function recreateMegaSecrets {
@@ -110,16 +110,57 @@ function deleteMavenPvc {
 }
 
 function createMegaDbIs {
-
+     oc create --filename mega-zep-db/is.json
 }
 
 function deleteMegaDbIs {
-
+     oc delete --filename mega-zep-db/is.json \
+                --ignore-not-found
 }
 
 function recreateMegaDbIs {
   deleteMegaDbIs
   createMegaDbIs
+}
+
+function createMegaDbPvc {
+     oc process --filename mega-zep-db/pvc.yml \
+                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --ignore-unknown-parameters=true \
+     | oc create --filename -
+}
+
+function deleteMegaDbPvc {
+     oc process --filename mega-zep-db/pvc.yml \
+                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --ignore-unknown-parameters=true \
+     | oc delete --filename - \
+                 --ignore-not-found
+}
+
+function recreateMegaDbPvc {
+  deleteMegaDbPvc
+  createMegaDbPvc
+}
+
+function createMegaDb {
+     oc process --filename mega-zep-db/mega-zep-db.yml \
+                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --ignore-unknown-parameters=true \
+     | oc create --filename -
+}
+
+function deleteMegaDb {
+     oc process --filename mega-zep-db/mega-zep-db.yml \
+                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --ignore-unknown-parameters=true \
+     | oc delete --filename - \
+                 --ignore-not-found
+}
+
+function recreateMegaDb {
+  deleteMegaDb
+  createMegaDb
 }
 
 function recreateMavenPvc {
