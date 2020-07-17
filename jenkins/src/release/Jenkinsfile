@@ -107,7 +107,7 @@ def deleteServiceResources(String service, String stage = "") {
         stage = "." + stage
     }
     sh "oc process --filename ${service}.yaml \
-                   --param-file=${service}.${stage}.properties \
+                   --param-file=${service}${stage}.properties \
                    | oc delete --ignore-not-found --filename -"
 }
 
@@ -116,7 +116,7 @@ def createServiceResources(String service, String stage = "", String additionalP
         stage = "." + stage
     }
     sh "oc process --filename ${service}.yaml \
-                   --param-file=${service}.${stage}.properties ${additionalParams} \
+                   --param-file=${service}${stage}.properties ${additionalParams} \
                    | oc create --filename -"
 }
 
