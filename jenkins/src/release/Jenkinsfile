@@ -45,7 +45,7 @@ Image-Tag:      ${params.version}\
                                                    params.targetEnvironment)
                             deleteServiceResources("mega-zep-frontend", \
                                                    params.targetEnvironment)
-                            sleep time: 3, unit: SECONDS
+                            sleep time: 3, unit: 'SECONDS'
                         }
                     }
                 }
