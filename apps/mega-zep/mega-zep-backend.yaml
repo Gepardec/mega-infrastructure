@@ -86,11 +86,11 @@ objects:
           volumes:
             - name: config
               secret:
-                secretName: "${SECRET}"
+                secretName: "${CONFIG_MAP}"
                 defaultMode: 420
             - name: secret
               configMap:
-                name: "${CONFIG_MAP}"
+                name: "${SECRET}"
                 defaultMode: 420
   - apiVersion: v1
     kind: Service
