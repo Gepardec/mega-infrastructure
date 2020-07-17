@@ -1,5 +1,8 @@
 .idea
 /*.properties
+!/application.dev.properties
+!/application.test.properties
+!/application.prod.properties
 /*.yaml
 /*.yaml
 /*.zip

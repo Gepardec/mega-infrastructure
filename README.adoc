@@ -58,7 +58,7 @@ The configuration for MEGA is provided via a properties file. Each used stage ne
 
 * ``mega-secrets.<STAGE>.properties`` +
 The staged configuration file
-* ``mega-secrets.jenkins.properties`` +
+* ``application.jenkins.properties`` +
 The configuration file used by Jenkins for the builds
 
 
