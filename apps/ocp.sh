@@ -5,11 +5,13 @@ cd $(pwd)
 set -u
 
 function createMegaSecrets {
-    oc create secret generic mega-secrets --from-file=filename=../mega-secrets.${STAGE}.properties
+    oc create configmap mega --from-file=filename=../application.${STAGE}.properties
+    oc create secret generic mega --from-file=filename=../mega-secrets.${STAGE}.properties
 }
 
 function deleteMegaSecrets {
-    oc delete secret mega-secrets --ignore-not-found
+    oc delete secret mega --ignore-not-found
+    oc delete configmap mega --ignore-not-found
 }
 
 function recreateMegaSecrets {
@@ -19,9 +21,9 @@ function recreateMegaSecrets {
 
 function createJenkinsSecrets {
     # Create mega secret for service and jenkins
-    oc create secret generic jenkins-mega-secrets --from-file=filename=../mega-secrets.jenkins.properties
-    oc annotate secret jenkins-mega-secrets jenkins.openshift.io/secret.name=jenkins-mega-secrets
-    oc label secret jenkins-mega-secrets credential.sync.jenkins.openshift.io=true
+    oc create secret generic jenkins-mega --from-file=filename=../application.jenkins.properties
+    oc annotate secret jenkins-mega jenkins.openshift.io/secret.name=jenkins-mega
+    oc label secret jenkins-mega credential.sync.jenkins.openshift.io=true
 
     # Create git http secret (Necessary for multibranch plugin)
     oc create secret generic github-http --from-env-file=../git-http.properties --type=kubernetes.io/basic-auth
@@ -36,7 +38,7 @@ function createJenkinsSecrets {
 }
 
 function deleteJenkinsSecrets {
-    oc delete secrets/jenkins-mega-secrets --ignore-not-found
+    oc delete secrets/jenkins-mega --ignore-not-found
     oc delete secrets/github-http --ignore-not-found
     oc delete configmap/jenkins-config --ignore-not-found
     oc delete secrets/jenkins --ignore-not-found
