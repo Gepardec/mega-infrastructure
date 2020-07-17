@@ -11,6 +11,9 @@ parameters:
 
     - name: "GIT_SECRET"
       required: true
+
+    - name: "MAVEN_VERSION"
+      required: true
     
     - name: "OPENJDK_IMAGE"
       value: "docker.io/library/openjdk:11-jdk-slim"
@@ -101,6 +104,9 @@ objects:
             type: Git
         strategy:
             dockerStrategy:
+                env:
+                  - name: "MAVEN_VERSION"
+                    value: "${MAVEN_VERSION}"
                 from:
                     kind: ImageStreamTag
                     name: ${JENKINS_SLAVE_BASE_IS}:latest
