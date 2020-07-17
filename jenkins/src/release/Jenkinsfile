@@ -45,6 +45,7 @@ Image-Tag:      ${params.version}\
                                                    params.targetEnvironment)
                             deleteServiceResources("mega-zep-frontend", \
                                                    params.targetEnvironment)
+                            sleep time: 3, unit: SECONDS
                         }
                     }
                 }
@@ -75,7 +76,6 @@ Image-Tag:      ${params.version}\
                                     createServiceResources("mega-zep-frontend", \
                                                            params.targetEnvironment, \
                                                            "--param=IMAGE='${env.OCP_REGISTRY}/${env.TARGET_PROJECT}/mega-zep-frontend:${params.version}'")
-                                    sh 'oc rollout latest dc/mega-zep-frontend'
                                 }
                             }
                         }
@@ -93,7 +93,6 @@ Image-Tag:      ${params.version}\
                                             params.targetEnvironment,
                                             "--param=JAVA_OPTIONS='-Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}' \
                                              --param=IMAGE='${env.OCP_REGISTRY}/${env.TARGET_PROJECT}/mega-zep-backend:${params.version}'")
-                                    sh 'oc rollout latest dc/mega-zep-backend'
                                 }
                             }
                         }
