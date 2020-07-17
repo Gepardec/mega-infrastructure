@@ -21,7 +21,7 @@ function recreateMegaSecrets {
 
 function createJenkinsSecrets {
     # Create mega secret for service and jenkins
-    oc create secret generic jenkins-mega --from-file=filename=../application.jenkins.properties
+    oc create secret generic jenkins-mega --from-file=filename=../mega-secrets.jenkins.properties
     oc annotate secret jenkins-mega jenkins.openshift.io/secret.name=jenkins-mega
     oc label secret jenkins-mega credential.sync.jenkins.openshift.io=true
 
