@@ -54,15 +54,16 @@ TIP: The YAML configuration file references secrets via environment variables, w
 
 ==== MEGA
 
-The configuration for MEGA is provided via a properties file. Each used stage needs its own configuration file to separate the configurations per stage. 
+The configuration for MEGA is provided via a properties file and a secret file.
+Each used stage needs its own configuration file to separate the configurations per stage.
 
-* ``mega-secrets.<STAGE>.properties`` +
-The staged configuration file
-* ``application.jenkins.properties`` +
-The configuration file used by Jenkins for the builds
+* ``application.<STAGE>.properties`` +
+The staged configuration file. (Part of the repository)
+* ``application.<STAGE>.properties`` +
+The staged secret file. (In Cloud storage)
 
 
-TIP: The configurations must be provided manually. See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
+TIP: The secret file must be provided manually. See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
 
 == Openshift Templates
 
@@ -101,6 +102,8 @@ The name of the Openshift secret providing the Openshift Secret of type ``kubern
 The Maven version used by the JDK build agent Container Image
 . ``MEMORY_LIMIT=2Gi`` +
 The Jenkins Service assgined RAM
+. ``MAVEN_VERSION=3.6.3`` +
+The Maven Version to use for the ``agent-jdk`` Jenkins Agent Pod
 
 === MEGA
 
@@ -121,8 +124,10 @@ The ``backend`` can be configured via the cited configuration properties.
 The value for the app label, which is add to each created Openshift Resource 
 * ``NAME=mega-zep-backend`` +
 The value for the service and created Openshift Resources
-* ``SECRET=mega-secrets`` +
-The name of the secret holding the MEGA configurations for the specific stage
+* ``SECRET=mega`` +
+The name of the secret holding the MEGA secrets for the specific stage
+* ``CONFIG_MAP=mega`` +
+The name of the configuration holding the MEGA configurations for the specific stage
 * ``CPU=500m`` +
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
@@ -142,6 +147,31 @@ The assigned CPU resources to the service
 The assigned RAM resources to the services
 * ``TIMEZONE=Europe/Vienna`` +
 The timezone to set on the container
+
+The ``db`` can be configured via the cited configuration properties.
+
+* ``APP=mega-zep`` +
+The value for the app label, which is add to each created Openshift Resource
+* ``NAME=mega-zep-db`` +
+The value for the service and created Openshift Resources
+* ``VERSION=10`` +
+The version of the postgres to use
+* ``SECRET=mega`` +
+The name of the secret holding the MEGA secrets for the specific stage
+* ``PVC=mega-zep-db-10`` +
+The name of persistence volume for the database
+* ``CPU=500m`` +
+The assigned CPU resources to the service
+* ``MEMORY=256Mi`` +
+The assigned RAM resources to the services
+* ``TIMEZONE=Europe/Vienna`` +
+The timezone to set on the container
+* ``DATABASE_MAX_CONNECTIONS=100`` +
+The maximal allowed connections to the database
+* ``DATABASE_SHARED_BUFFERS=64MB`` +
+The maximal shared buffer size
+* ``PGCTLTIMEOUT=150`` +
+The pgctl timeout in seconds
 
 == Pipelines
 
@@ -257,6 +287,37 @@ oc apps/ocp.sh deleteMavenPvc
 
 # Delete/Create maven pvc
 oc apps/ocp.sh recreateMavenPvc
+----
+
+.MEGA database
+[source,bash]
+----
+# Create the mega db image streams
+oc apps/ocp.sh createMegaDbIs
+
+# Delete the mega db image streams
+oc apps/ocp.sh deleteMegaDbIs
+
+# Delete/Create the mega db image streams
+oc apps/ocp.sh recreateMegaDbIs
+
+# Create the mega db persistence volume
+oc apps/ocp.sh createMegaDbPvc
+
+# Delete the mega db persistence volume
+oc apps/ocp.sh deleteMegaDbPvc
+
+# Delete/Create the mega db persistence volume
+oc apps/ocp.sh recreateMegaDbPvc
+
+# Create the mega db
+oc apps/ocp.sh createMegaDb
+
+# Delete the mega db
+oc apps/ocp.sh deleteMegaDb
+
+# Delete/Create the mega db
+oc apps/ocp.sh recreateMegaDb
 ----
 
 IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars in ``apps/ocp.sh`` are properly setup for your needs.
