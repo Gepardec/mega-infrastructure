@@ -125,14 +125,14 @@ function recreateMegaDbIs {
 
 function createMegaDbPvc {
      oc process --filename mega-zep-db/pvc.yml \
-                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --param-file=mega-zep-db/parameters.${STAGE}.properties \
                 --ignore-unknown-parameters=true \
      | oc create --filename -
 }
 
 function deleteMegaDbPvc {
      oc process --filename mega-zep-db/pvc.yml \
-                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+                --param-file=mega-zep-db/parameters.${STAGE}.properties \
                 --ignore-unknown-parameters=true \
      | oc delete --filename - \
                  --ignore-not-found
@@ -144,15 +144,15 @@ function recreateMegaDbPvc {
 }
 
 function createMegaDb {
-     oc process --filename mega-zep-db/mega-zep-db.yml \
-                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+     oc process --filename mega-zep-db/template.yml \
+                --param-file=mega-zep-db/parameters.${STAGE}.properties \
                 --ignore-unknown-parameters=true \
      | oc create --filename -
 }
 
 function deleteMegaDb {
-     oc process --filename mega-zep-db/mega-zep-db.yml \
-                --param-file=mega-zep-db/mega-zep-db.${STAGE}.properties \
+     oc process --filename mega-zep-db/template.yml \
+                --param-file=mega-zep-db/parameters.${STAGE}.properties \
                 --ignore-unknown-parameters=true \
      | oc delete --filename - \
                  --ignore-not-found
