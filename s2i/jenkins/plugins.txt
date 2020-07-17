@@ -121,3 +121,4 @@ workflow-step-api:2.22
 workflow-support:3.4
 email-ext:2.69
 configuration-as-code:1.35
+jacoco:3.0.5
