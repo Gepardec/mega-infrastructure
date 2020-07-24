@@ -61,14 +61,14 @@ jobs:
         }
 
     - script: >
-        pipelineJob('mega-release') {
+        pipelineJob('mega-deploy') {
             parameters {
                 stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
             }
             definition {
                 cpsScm {
                     lightweight(false)
-                    scriptPath('jenkins/src/release/Jenkinsfile')
+                    scriptPath('jenkins/src/deploy/Jenkinsfile')
                     scm {
                         git {
                             branch('^${Branch}')
@@ -81,3 +81,37 @@ jobs:
                 }
             }
         }
+
+    - script: >
+          multibranchPipelineJob('mega-release') {
+              displayName('Mega-Release')
+              factory {
+                  workflowBranchProjectFactory {
+                    scriptPath('jenkins/src/release/Jenkinsfile')
+                  }
+              }
+              branchSources {
+                  github {
+                      // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
+                      id('mega-release') // IMPORTANT: use a constant and unique identifier
+                      checkoutCredentialsId('github-http')
+                      scanCredentialsId('github-http')
+                      repoOwner('Gepardec')
+                      repository('mega')
+
+                      includes('release/*')
+
+                      buildOriginBranch(true)
+                      buildForkPRHead(false)
+                      buildForkPRMerge(false)
+                      buildOriginBranchWithPR(false)
+                      buildOriginPRHead(false)
+                      buildOriginPRMerge(false)
+                  }
+              }
+              orphanedItemStrategy {
+                  discardOldItems {
+                      numToKeep(0)
+                  }
+              }
+          }
