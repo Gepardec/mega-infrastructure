@@ -12,6 +12,8 @@ USER root
 ADD docker-entrypoint.sh /
 
 RUN useradd -d /home/jagent -g 0 -u 1001 -s /usr/sbin/nologin jagent \
+    && yum updateinfo skopeo \
+    && yum install -y skopeo \
     && mkdir -p ${MAVEN_HOME} ${JAVA_HOME} \
     && curl -L --silent --show-error --fail https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz \
          | tar --strip-components=1 -zx -C ${JAVA_HOME} \

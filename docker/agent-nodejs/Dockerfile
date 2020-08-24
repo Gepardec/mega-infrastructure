@@ -8,7 +8,7 @@ ENV NPM_CONFIG_PREFIX=/npm/.npm-global \
 
 # Install NodeJS
 RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash - \
-    && yum install -y gcc c++ make nodejs \
+    && yum install -y gcc c++ make nodejs skopeo \
     && npm install -g @angular/cli \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
     && yum -y install google-chrome-stable_current_x86_64.rpm \
