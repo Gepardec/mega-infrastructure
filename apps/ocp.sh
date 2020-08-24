@@ -32,6 +32,11 @@ function createJenkinsSecrets {
     oc annotate secret github-http jenkins.openshift.io/secret.name=github-http
     oc label secret github-http credential.sync.jenkins.openshift.io=true
 
+    # Create git http secret (Necessary for multibranch plugin)
+    oc create secret generic dockerhub --from-env-file=../dockerhub.properties --type=kubernetes.io/basic-auth
+    oc annotate secret dockerhub jenkins.openshift.io/secret.name=dockerhub
+    oc label secret dockerhub credential.sync.jenkins.openshift.io=true
+
     # Create jenkins-config-secret
     oc create configmap jenkins-config --from-file=jenkins-config.yaml=../config/jenkins/jenkins-config.yaml
     
@@ -44,6 +49,7 @@ function deleteJenkinsSecrets {
     oc delete secrets/github-http --ignore-not-found
     oc delete configmap/jenkins-config --ignore-not-found
     oc delete secrets/jenkins --ignore-not-found
+    oc delete secrets/dockerhub --ignore-not-found
 }
 
 function recreateJenkinsSecrets {

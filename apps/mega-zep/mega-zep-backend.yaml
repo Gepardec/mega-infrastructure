@@ -92,6 +92,16 @@ objects:
               configMap:
                 name: "${CONFIG_MAP}"
                 defaultMode: 420
+      triggers:
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: "mega-zep-backend:latest"
+            lastTriggeredImage: ""
+          type: ImageChange
   - apiVersion: v1
     kind: Service
     metadata:
@@ -161,7 +171,5 @@ parameters:
   - name: "CONFIG_MAP"
     displayName: "The config map providing the configuration"
     required: true
-  - name: "IMAGE"
-    value: ""
   - name: "TIMEZONE"
     required: true

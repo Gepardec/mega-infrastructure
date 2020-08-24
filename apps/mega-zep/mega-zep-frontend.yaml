@@ -66,6 +66,16 @@ objects:
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           terminationGracePeriodSeconds: 30
+      triggers:
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: "mega-zep-frontend:latest"
+            lastTriggeredImage: ""
+          type: ImageChange
   - apiVersion: v1
     kind: Service
     metadata:
@@ -118,7 +128,5 @@ parameters:
   - name: "MEMORY"
     displayName: "The memory count to use. E.g.: 512Mi"
     required: true
-  - name: "IMAGE"
-    value: ""
   - name: "TIMEZONE"
     required: true
