@@ -11,7 +11,6 @@ pipeline {
     }
 
     environment {
-        DOCKER_REGISTRY = 'registry.hub.docker.com/'
         MEGA_PROJECT = "57-mega-"
         TARGET_PROJECT = "${env.MEGA_PROJECT + params.targetEnvironment}"
         OCP_ROUTE_SUFFIX = "${env.TARGET_PROJECT}.cloud.itandtel.at"
@@ -63,8 +62,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         openshift.withCluster() {
-                            openshift.tag("${env.DOCKER_REGISTRY}/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:latest")
-                            openshift.tag("${env.DOCKER_REGISTRY}/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:latest")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:latest")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:latest")
                         }
                     }
                 }
@@ -91,7 +90,7 @@ def createServiceResources(String service, String stage = "", String additionalP
                    --param-file=${service}${stage}.properties ${additionalParams} \
                    | oc create --filename -"
     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-        sh "oc import-image ${service}:latest --from=${env.DOCKER_REGISTRY}/${USERNAME}/mega-zep-backend:${params.version}"
+        sh "oc import-image ${service}:latest --from=docker.io/${USERNAME}/mega-zep-backend:${params.version}"
     }
 }
 
