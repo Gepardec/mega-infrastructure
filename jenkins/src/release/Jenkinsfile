@@ -4,10 +4,10 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the JEnkinsfile from')
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
         choice(name: 'targetEnvironment', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy to')
         string(name: 'version', defaultValue: 'latest', description: 'The image version to release', trim: true)
-        booleanParam(name: 'full', defaultValue: false, description: 'True if all Openshift resource shall eb dropped and recreated', trim: true)
+        booleanParam(name: 'full', defaultValue: false, description: 'True if all Openshift resource shall eb dropped and recreated')
     }
 
     environment {
