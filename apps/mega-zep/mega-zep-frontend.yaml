@@ -73,7 +73,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              name: "mega-zep-frontend:latest"
+              name: "mega-zep-frontend:${IMAGE_TAG}"
             lastTriggeredImage: ""
           type: ImageChange
   - apiVersion: v1
@@ -129,4 +129,6 @@ parameters:
     displayName: "The memory count to use. E.g.: 512Mi"
     required: true
   - name: "TIMEZONE"
+    required: true
+  - name: "IMAGE_TAG"
     required: true

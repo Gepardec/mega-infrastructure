@@ -99,7 +99,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              name: "mega-zep-backend:latest"
+              name: "mega-zep-backend:${IMAGE_TAG}"
             lastTriggeredImage: ""
           type: ImageChange
   - apiVersion: v1
@@ -172,4 +172,6 @@ parameters:
     displayName: "The config map providing the configuration"
     required: true
   - name: "TIMEZONE"
+    required: true
+  - name: "IMAGE_TAG"
     required: true

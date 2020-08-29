@@ -61,8 +61,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         openshift.withCluster() {
-                            openshift.tag("docker.io/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:latest")
-                            openshift.tag("docker.io/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:latest")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:${params.targetEnvironment}")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:${params.targetEnvironment}")
                         }
                     }
                 }
@@ -77,6 +77,7 @@ def deleteServiceResources(String service, String stage = "") {
     }
     sh "oc process --filename ${service}.yaml \
                    --param-file=${service}${stage}.properties \
+                   --param=IMAGE_TAG=${params.targetEnvironment} \
                    | oc delete --ignore-not-found --filename -"
     sh "oc delete is/${service} --ignore-not-found=true"
 }
@@ -86,10 +87,10 @@ def createServiceResources(String service, String stage = "", String additionalP
         stage = "." + stage
     }
     sh "oc process --filename ${service}.yaml \
-                   --param-file=${service}${stage}.properties ${additionalParams} \
+                   --param-file=${service}${stage}.properties --param=IMAGE_TAG=${params.targetEnvironment} ${additionalParams} \
                    | oc create --filename -"
     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-        sh "oc create is ${service} && oc import-image ${service}:latest --from=docker.io/${USERNAME}/${service}:${params.version}"
+        sh "oc create is ${service} && oc import-image ${service}:${params.targetEnvironment} --from=docker.io/${USERNAME}/${service}:${params.version}"
     }
 }
 
