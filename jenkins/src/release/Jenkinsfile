@@ -77,7 +77,7 @@ def deleteServiceResources(String service, String stage = "") {
     }
     sh "oc process --filename ${service}.yaml \
                    --param-file=${service}${stage}.properties \
-                   --param=IMAGE_TAG='${params.targetEnvironment} \
+                   --param=IMAGE_TAG=${params.targetEnvironment} \
                    | oc delete --ignore-not-found --filename -"
     sh "oc delete is/${service} --ignore-not-found=true"
 }
@@ -87,7 +87,7 @@ def createServiceResources(String service, String stage = "", String additionalP
         stage = "." + stage
     }
     sh "oc process --filename ${service}.yaml \
-                   --param-file=${service}${stage}.properties --param=IMAGE_TAG='${params.targetEnvironment} ${additionalParams} \
+                   --param-file=${service}${stage}.properties --param=IMAGE_TAG=${params.targetEnvironment} ${additionalParams} \
                    | oc create --filename -"
     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         sh "oc create is ${service} && oc import-image ${service}:latest --from=docker.io/${USERNAME}/${service}:${params.version}"
