@@ -52,14 +52,13 @@ jobs:
             }
             orphanedItemStrategy {
                 discardOldItems {
-                    numToKeep(1)
+                    numToKeep(0)
                 }
             }
             triggers {
                 periodic(5)
             }
         }
-
     - script: >
         pipelineJob('mega-deploy') {
             parameters {
