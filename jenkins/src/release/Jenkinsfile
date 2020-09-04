@@ -6,6 +6,7 @@ pipeline {
     parameters {
         string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
         choice(name: 'targetEnvironment', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy to')
+        choice(name: 'stage', choices: ['default','dev', 'test', 'prod'], description: 'The environment to deploy to')
         string(name: 'version', defaultValue: 'latest', description: 'The image version to release', trim: true)
         booleanParam(name: 'full', defaultValue: false, description: 'True if all Openshift resource shall eb dropped and recreated')
     }
@@ -44,9 +45,10 @@ pipeline {
                             deleteServiceResources("mega-zep-backend", params.targetEnvironment)
                             def frontendProps = readServiceProperties("mega-zep-frontend", ".", params.targetEnvironment)
                             def service = "https://${frontendProps.NAME}-${env.OCP_ROUTE_SUFFIX}"
+                            def stage = (params.stage == "default" ? params.targetEnvironment : params.stage) + "stage"
                             createServiceResources("mega-zep-backend",
                                     params.targetEnvironment,
-                                    "--param=JAVA_OPTIONS='-Dquarkus.profile=${params.targetEnvironment}stage -Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}'")
+                                    "--param=JAVA_OPTIONS='-Dquarkus.profile=${stage} -Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}'")
                         }
                     }
                 }
