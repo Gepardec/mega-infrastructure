@@ -71,12 +71,8 @@ objects:
                 requests:
                   cpu: "${CPU}"
                   memory: "${MEMORY}"
-              terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:
-                - mountPath: /deployments/config/application.properties
-                  name: config
-                  subPath: filename
                 - mountPath: /deployments/.env
                   name: secret
                   subPath: filename
@@ -87,10 +83,6 @@ objects:
             - name: secret
               secret:
                 secretName: "${SECRET}"
-                defaultMode: 420
-            - name: config
-              configMap:
-                name: "${CONFIG_MAP}"
                 defaultMode: 420
       triggers:
         - imageChangeParams:
@@ -167,9 +159,6 @@ parameters:
     required: true
   - name: "SECRET"
     displayName: "The secret providing the secret configuration"
-    required: true
-  - name: "CONFIG_MAP"
-    displayName: "The config map providing the configuration"
     required: true
   - name: "TIMEZONE"
     required: true
