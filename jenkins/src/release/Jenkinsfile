@@ -5,7 +5,7 @@ pipeline {
 
     parameters {
         string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
-        choice(name: 'targetEnvironment', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy to')
+        choice(name: 'target', choices: ['dev', 'test', 'prod'], description: 'The environment to deploy to')
         choice(name: 'stage', choices: ['default','dev', 'test', 'prod'], description: 'The environment to deploy to')
         string(name: 'version', defaultValue: 'latest', description: 'The image version to release', trim: true)
         booleanParam(name: 'full', defaultValue: false, description: 'True if all Openshift resource shall eb dropped and recreated')
@@ -13,7 +13,7 @@ pipeline {
 
     environment {
         MEGA_PROJECT = "57-mega-"
-        TARGET_PROJECT = "${env.MEGA_PROJECT + params.targetEnvironment}"
+        TARGET_PROJECT = "${env.MEGA_PROJECT + params.target}"
         OCP_ROUTE_SUFFIX = "${env.TARGET_PROJECT}.cloud.itandtel.at"
     }
 
@@ -39,15 +39,15 @@ pipeline {
                     dir('apps/mega-zep') {
                         openshift.withCluster() {
                             // Frontend
-                            deleteServiceResources("mega-zep-frontend", params.targetEnvironment)
-                            createServiceResources("mega-zep-frontend", params.targetEnvironment)
+                            deleteServiceResources("mega-zep-frontend", params.target)
+                            createServiceResources("mega-zep-frontend", params.target)
                             // Backend
-                            deleteServiceResources("mega-zep-backend", params.targetEnvironment)
-                            def frontendProps = readServiceProperties("mega-zep-frontend", ".", params.targetEnvironment)
+                            deleteServiceResources("mega-zep-backend", params.target)
+                            def frontendProps = readServiceProperties("mega-zep-frontend", ".", params.target)
                             def service = "https://${frontendProps.NAME}-${env.OCP_ROUTE_SUFFIX}"
-                            def stage = (params.stage == "default" ? params.targetEnvironment : params.stage) + "stage"
+                            def stage = (params.stage == "default" ? params.target : params.stage) + "stage"
                             createServiceResources("mega-zep-backend",
-                                    params.targetEnvironment,
+                                    params.target,
                                     "--param=JAVA_OPTIONS='-Dquarkus.profile=${stage} -Djava.net.preferIPv4Stack=true -Dquarkus.http.cors.origins=${service}'")
                         }
                     }
@@ -63,8 +63,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         openshift.withCluster() {
-                            openshift.tag("docker.io/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:${params.targetEnvironment}")
-                            openshift.tag("docker.io/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:${params.targetEnvironment}")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-frontend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-frontend:${params.target}")
+                            openshift.tag("docker.io/${USERNAME}/mega-zep-backend:${params.version}", "${env.TARGET_PROJECT}/mega-zep-backend:${params.target}")
                         }
                     }
                 }
@@ -79,7 +79,7 @@ def deleteServiceResources(String service, String stage = "") {
     }
     sh "oc process --filename ${service}.yaml \
                    --param-file=${service}${stage}.properties \
-                   --param=IMAGE_TAG=${params.targetEnvironment} \
+                   --param=IMAGE_TAG=${params.target} \
                    | oc delete --ignore-not-found --filename -"
     sh "oc delete is/${service} --ignore-not-found=true"
 }
@@ -89,10 +89,10 @@ def createServiceResources(String service, String stage = "", String additionalP
         stage = "." + stage
     }
     sh "oc process --filename ${service}.yaml \
-                   --param-file=${service}${stage}.properties --param=IMAGE_TAG=${params.targetEnvironment} ${additionalParams} \
+                   --param-file=${service}${stage}.properties --param=IMAGE_TAG=${params.target} ${additionalParams} \
                    | oc create --filename -"
     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-        sh "oc create is ${service} && oc import-image ${service}:${params.targetEnvironment} --from=docker.io/${USERNAME}/${service}:${params.version}"
+        sh "oc create is ${service} && oc import-image ${service}:${params.target} --from=docker.io/${USERNAME}/${service}:${params.version}"
     }
 }
 

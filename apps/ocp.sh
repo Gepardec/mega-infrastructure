@@ -5,14 +5,12 @@ cd $(pwd)
 set -u
 
 function createMegaSecrets {
-    oc create configmap mega --from-file=filename=../application.${STAGE}.properties
     oc create secret generic mega --from-file=filename=../mega-secrets.${STAGE}.properties
     oc create secret generic mega-zep-db --from-env-file=../mega-zep-db.${STAGE}.properties
 }
 
 function deleteMegaSecrets {
     oc delete secret mega --ignore-not-found
-    oc delete configmap mega --ignore-not-found
     oc delete secret mega-zep-db --ignore-not-found
 }
 
