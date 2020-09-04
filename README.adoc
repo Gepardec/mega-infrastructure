@@ -126,8 +126,6 @@ The value for the app label, which is add to each created Openshift Resource
 The value for the service and created Openshift Resources
 * ``SECRET=mega`` +
 The name of the secret holding the MEGA secrets for the specific stage
-* ``CONFIG_MAP=mega`` +
-The name of the configuration holding the MEGA configurations for the specific stage
 * ``CPU=500m`` +
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
