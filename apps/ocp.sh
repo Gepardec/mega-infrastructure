@@ -20,34 +20,54 @@ function recreateMegaSecrets {
 }
 
 function createJenkinsSecrets {
+    # Create git http secret (Necessary for multibranch plugin)
+    # DON#T RENAME IS USED BY BUILD CONFIGS AS WELL
+    oc create secret generic github-http --from-env-file=../secrets/jenkins/jenkins-git-http.properties --type=kubernetes.io/basic-auth
+    oc annotate secret github-http jenkins.openshift.io/secret.name=github-http
+    oc label secret github-http credential.sync.jenkins.openshift.io=true
+
     # Create mega secret for service and jenkins
-    oc create secret generic jenkins-mega --from-file=filename=../mega-secrets.jenkins.properties
+    oc create secret generic jenkins-mega --from-file=filename=../secrets/jenkins/jenkins-mega.properties
     oc annotate secret jenkins-mega jenkins.openshift.io/secret.name=jenkins-mega
     oc label secret jenkins-mega credential.sync.jenkins.openshift.io=true
 
     # Create git http secret (Necessary for multibranch plugin)
-    oc create secret generic github-http --from-env-file=../git-http.properties --type=kubernetes.io/basic-auth
-    oc annotate secret github-http jenkins.openshift.io/secret.name=github-http
-    oc label secret github-http credential.sync.jenkins.openshift.io=true
+    oc create secret generic jenkins-dockerhub --from-env-file=../secrets/jenkins/jenkins-dockerhub.properties --type=kubernetes.io/basic-auth
+    oc annotate secret jenkins-dockerhub jenkins.openshift.io/secret.name=dockerhub
+    oc label secret jenkins-dockerhub credential.sync.jenkins.openshift.io=true
 
-    # Create git http secret (Necessary for multibranch plugin)
-    oc create secret generic dockerhub --from-env-file=../dockerhub.properties --type=kubernetes.io/basic-auth
-    oc annotate secret dockerhub jenkins.openshift.io/secret.name=dockerhub
-    oc label secret dockerhub credential.sync.jenkins.openshift.io=true
+    # Create jenkins mega db dev secret
+    oc create secret generic jenkins-mega-db-dev --from-env-file=../secrets/jenkins/jenkins-mega-db-dev.properties --type=kubernetes.io/basic-auth
+    oc annotate secret jenkins-mega-db-dev jenkins.openshift.io/secret.name=mega-db-dev
+    oc label secret jenkins-mega-db-dev credential.sync.jenkins.openshift.io=true
+
+    # Create jenkins mega db test secret
+    oc create secret generic jenkins-mega-db-test --from-env-file=../secrets/jenkins/jenkins-mega-db-test.properties --type=kubernetes.io/basic-auth
+    oc annotate secret jenkins-mega-db-test jenkins.openshift.io/secret.name=mega-db-test
+    oc label secret jenkins-mega-db-test credential.sync.jenkins.openshift.io=true
+
+    # Create jenkins mega db prod secret
+    oc create secret generic jenkins-mega-db-prod --from-env-file=../secrets/jenkins/jenkins-mega-db-prod.properties --type=kubernetes.io/basic-auth
+    oc annotate secret jenkins-mega-db-prod jenkins.openshift.io/secret.name=mega-db-prod
+    oc label secret jenkins-mega-db-prod credential.sync.jenkins.openshift.io=true
 
     # Create jenkins-config-secret
     oc create configmap jenkins-config --from-file=jenkins-config.yaml=../config/jenkins/jenkins-config.yaml
     
     # Create jenkins-config-secret
-    oc create secret generic jenkins --from-env-file=../jenkins-secrets.properties --type=kubernetes.io/opaque
+    oc create secret generic jenkins --from-env-file=../secrets/jenkins/jenkins-secrets.properties --type=kubernetes.io/opaque
 }
 
 function deleteJenkinsSecrets {
-    oc delete secrets/jenkins-mega --ignore-not-found
-    oc delete secrets/github-http --ignore-not-found
     oc delete configmap/jenkins-config --ignore-not-found
+
+    oc delete secrets/github-http --ignore-not-found
+    oc delete secrets/jenkins-mega --ignore-not-found
+    oc delete secrets/jenkins-dockerhub --ignore-not-found
+    oc delete secrets/jenkins-mega-db-dev --ignore-not-found
+    oc delete secrets/jenkins-mega-db-test --ignore-not-found
+    oc delete secrets/jenkins-mega-db-prod --ignore-not-found
     oc delete secrets/jenkins --ignore-not-found
-    oc delete secrets/dockerhub --ignore-not-found
 }
 
 function recreateJenkinsSecrets {
