@@ -8,19 +8,19 @@ jenkins:
           permissions:
             - "Overall/Read:authenticated"
             - "Overall/Administer:authenticated"
-unclassified: 
+unclassified:
     location:
         url: "https://${POD_NAME}-${POD_NAMESPACE}.cloud.itandtel.at"
-        adminAddress: "Jenkins <${EMAIL_USER}>"
+        adminAddress: "Jenkins <${email.user}>"
     mailer:
         smtpHost: "smtp.gmail.com"
         smtpPort: 465
         useSsl: true
         defaultSuffix: "@gepardec.com"
         replyToAddress: "noreplay@gepardec.com"
-        authentication: 
-            username: "${EMAIL_USER}"
-            password: "${EMAIL_PWD}"
+        authentication:
+            username: "${email.user}"
+            password: "${email.password}"
         charset: "UTF-8"
 jobs:
     - script: >

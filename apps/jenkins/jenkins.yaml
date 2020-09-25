@@ -71,16 +71,8 @@ objects:
             value: ${JNLP_SERVICE_NAME}
           - name: "CASC_JENKINS_CONFIG"
             value: "/jenkins-conf"
-          - name: "EMAIL_USER"
-            valueFrom:
-              secretKeyRef:
-                name: "${JENKINS_SERVICE_NAME}"
-                key: "emailUser"
-          - name: "EMAIL_PWD"
-            valueFrom:
-              secretKeyRef:
-                name: "${JENKINS_SERVICE_NAME}"
-                key: "emailPassword"
+          - name: "SECRETS"
+            value: "/secrets"
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -117,6 +109,10 @@ objects:
             name: ${JENKINS_SERVICE_NAME}-data
           - name: "${JENKINS_SERVICE_NAME}-conf"
             mountPath: "/jenkins-conf"
+            readOnly: true
+          - name: "${JENKINS_SERVICE_NAME}-secrets"
+            mountPath: "/secrets"
+            readOnly: true
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
@@ -132,6 +128,9 @@ objects:
               items:
                 - key: jenkins-config.yaml
                   path: ./jenkins-config.yaml
+          - name: "${JENKINS_SERVICE_NAME}-secrets"
+            secret:
+              secretName: "${JENKINS_SERVICE_NAME}"
     triggers:
     - imageChangeParams:
         automatic: true
