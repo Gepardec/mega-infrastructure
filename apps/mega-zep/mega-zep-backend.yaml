@@ -44,7 +44,7 @@ objects:
                 - name: TZ
                   value: "${TIMEZONE}"
               image: "${IMAGE}"
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               name: "${NAME}"
               ports:
                 - containerPort: 8080
