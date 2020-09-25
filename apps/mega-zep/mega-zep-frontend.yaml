@@ -39,7 +39,7 @@ objects:
               env:
                 - name: TZ
                   value: "${TIMEZONE}"
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               name: "${NAME}"
               ports:
                 - containerPort: 8080
