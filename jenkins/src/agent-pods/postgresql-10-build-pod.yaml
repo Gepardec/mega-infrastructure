@@ -1,0 +1,20 @@
+kind: Pod
+metadata:
+  name: postgresql-agent-pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: postgresql
+      image: docker-registry.default.svc:5000/57-mega-dev/jenkins-agent-postgresql-10:latest
+      imagePullPolicy: Always
+      command:
+        - cat
+      tty: true
+      env:
+        - name: Branch
+          value: ${env.Branch}
+      resources:
+        limits:
+          memory: 512Mi
+          cpu: 500m
+  restartPolicy: Never

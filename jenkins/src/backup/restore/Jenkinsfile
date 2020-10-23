@@ -1,0 +1,74 @@
+#!groovy
+
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'openshift'
+            yaml """
+kind: Pod
+metadata:
+  name: postgresql-agent-pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: postgresql
+      image: docker-registry.default.svc:5000/57-mega-dev/jenkins-agent-postgresql-10:latest
+      imagePullPolicy: Always
+      command:
+        - cat
+      tty: true
+      env:
+        - name: Branch
+          value: ${env.Branch}
+      resources:
+        limits:
+          memory: 128Mi
+          cpu: 250m
+      volumeMounts:
+        - name: backup
+          mountPath: /backup
+  restartPolicy: Never
+  volumes:
+    - name: backup
+      persistentVolumeClaim:
+        claimName: mega-backup
+"""
+        }
+    }
+
+    parameters {
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
+        string(name: 'dumpFile', defaultValue: '', description: 'The dumpfile to restore')
+        choice(name: 'stage', choices: ['dev', 'test', 'prod'], description: 'The stage to restore')
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        BACKUP_ROOT_DIR = '/backup'
+        BACKUP_VERSION = 'v1'
+        DB_NAME = 'mega'
+    }
+
+    stages {
+        stage('Backup') {
+            steps {
+                script {
+                    container('postgresql') {
+                        openshift.withCluster() {
+                            // pg_restore ${POSTGRES_CON_ARGS} -d postgres --clean --if-exists --create --format tar ${RESTORE_POSTGRES_FILE}
+                            withCredentials([usernamePassword(credentialsId: "mega-db-${env.stage}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                                sh "set +x \
+                                    && export PGPASSWORD=${PASSWORD} \
+                                    && psql -h mega-zep-db.57-mega-${params.stage}.svc -p 5432 -U postgres -w -d postgres -c \"select pg_terminate_backend(pid) from pg_stat_activity where datname='${env.DB_NAME}';\" \
+                                    && pg_restore -h mega-zep-db.57-mega-${params.stage}.svc -p 5432 -U postgres -w -d postgres --clean --if-exists --create --format tar ${env.BACKUP_ROOT_DIR}/${params.dumpFile}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

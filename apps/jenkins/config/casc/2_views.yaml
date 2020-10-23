@@ -1,0 +1,38 @@
+jenkins:
+  views:
+    - list:
+        name: "Mega"
+        includeRegex: "mega-build|mega-release"
+        columns:
+          - "status"
+          - "weather"
+          - "jobName"
+          - "lastSuccess"
+          - "lastFailure"
+          - "lastDuration"
+          - "buildButton"
+          - "favoriteColumn"
+    - list:
+        name: "Mega-Backups"
+        includeRegex: "mega-backup-.*"
+        columns:
+          - "status"
+          - "weather"
+          - "jobName"
+          - "lastSuccess"
+          - "lastFailure"
+          - "lastDuration"
+          - "buildButton"
+          - "favoriteColumn"
+    - list:
+        name: "Mega-All"
+        includeRegex: "mega-.*"
+        columns:
+          - "status"
+          - "weather"
+          - "jobName"
+          - "lastSuccess"
+          - "lastFailure"
+          - "lastDuration"
+          - "buildButton"
+          - "favoriteColumn"

@@ -1,4 +1,5 @@
 .idea
+secrets/
 /*.properties
 !/application.dev.properties
 !/application.test.properties
@@ -6,6 +7,7 @@
 /*.yaml
 /*.yaml
 /*.zip
+/backups
 
 .idea
 *.iml

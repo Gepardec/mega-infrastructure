@@ -33,11 +33,17 @@ parameters:
     - name: "NODEJS_AGENT_IS"
       value: "jenkins-agent-nodejs-12-5"
 
+    - name: "POSTGRESQL_AGENT_IS"
+      value: "jenkins-agent-postgresql-10"
+
     - name: "OPENJDK_CONTEXT"
       value: "docker/agent-jdk"
 
     - name: "NODEJS_CONTEXT"
       value: "docker/agent-nodejs"
+
+    - name: "POSTGRESQL_CONTEXT"
+      value: "docker/agent-postgresql"
     
 objects:
   - kind: "ImageStream"
@@ -84,6 +90,10 @@ objects:
     apiVersion: "v1"
     metadata:
         name: "${NODEJS_AGENT_IS}"
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+      name: "${POSTGRESQL_AGENT_IS}"
   - apiVersion: v1
     kind: BuildConfig
     metadata:
@@ -140,6 +150,34 @@ objects:
                     name: "${JENKINS_SLAVE_BASE_IS}:latest"
             type: Docker
         triggers:
+        - type: ConfigChange
+        - imageChange: {}
+          type: ImageChange
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${POSTGRESQL_AGENT_IS}
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${POSTGRESQL_AGENT_IS}:latest
+      runPolicy: Serial
+      source:
+        contextDir: "${POSTGRESQL_CONTEXT}"
+        git:
+          ref: "${GIT_REF}"
+          uri: "${GIT_URL}"
+        sourceSecret:
+          name: "${GIT_SECRET}"
+        type: Git
+      strategy:
+        dockerStrategy:
+          from:
+            kind: ImageStreamTag
+            name: "${JENKINS_SLAVE_BASE_IS}:latest"
+        type: Docker
+      triggers:
         - type: ConfigChange
         - imageChange: {}
           type: ImageChange

@@ -1,0 +1,28 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+  numExecutors: 10
+  scmCheckoutRetryCount: 2
+  mode: NORMAL
+  authorizationStrategy:
+    projectMatrix:
+      permissions:
+        - "Overall/Read:authenticated"
+        - "Overall/Administer:authenticated"
+unclassified:
+  location:
+    url: "https://${POD_NAME}-${POD_NAMESPACE}.cloud.itandtel.at"
+    adminAddress: "Jenkins <${email.user}>"
+  mailer:
+    smtpHost: "smtp.gmail.com"
+    smtpPort: 465
+    useSsl: true
+    defaultSuffix: "@gepardec.com"
+    replyToAddress: "noreplay@gepardec.com"
+    authentication:
+      username: "${email.user}"
+      password: "${email.password}"
+    charset: "UTF-8"
+  buildTimestamp:
+    enableBuildTimestamp: true
+    pattern: "yyyy-MM-dd_HH-mm-ss"
+    timezone: "Europe/Vienna"

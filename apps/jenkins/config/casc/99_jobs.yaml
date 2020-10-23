@@ -1,0 +1,121 @@
+jobs:
+  - script: >
+      multibranchPipelineJob('mega-build') {
+          displayName('Mega-Build')
+          factory {
+              workflowBranchProjectFactory {
+                scriptPath('jenkins/src/build/Jenkinsfile')
+              }
+          }
+          branchSources {
+              github {
+                  // The id option in the Git and GitHub branch source contexts is now mandatory (JENKINS-43693).
+                  id('mega-build') // IMPORTANT: use a constant and unique identifier
+                  checkoutCredentialsId('github-http')
+                  scanCredentialsId('github-http')
+                  repoOwner('Gepardec')
+                  repository('mega')
+                  includes('develop feature/* hotfix/* release/*')
+                  buildOriginBranch(true)
+
+                  // Because of branch not found for PR
+                  buildForkPRHead(false)
+                  buildForkPRMerge(false)
+                  buildOriginBranchWithPR(true)
+                  buildOriginPRHead(false)
+                  buildOriginPRMerge(false)
+              }
+          }
+          orphanedItemStrategy {
+              discardOldItems {
+                  numToKeep(0)
+              }
+          }
+          triggers {
+              periodic(5)
+          }
+      }
+  - script: >
+      pipelineJob('mega-release') {
+          parameters {
+              stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+          }
+          definition {
+              cpsScm {
+                  lightweight(false)
+                  scriptPath('jenkins/src/release/Jenkinsfile')
+                  scm {
+                      git {
+                          branch('^${Branch}')
+                          remote {
+                              url('https://github.com/Gepardec/mega-infrastructure.git')
+                              credentials('github-http')
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  - script: >
+      pipelineJob('mega-backup-backup') {
+          parameters {
+                stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+          }
+          definition {
+              cpsScm {
+                  lightweight(false)
+                  scriptPath('jenkins/src/backup/backup/Jenkinsfile')
+                  scm {
+                      git {
+                          branch('^${Branch}')
+                          remote {
+                              url('https://github.com/Gepardec/mega-infrastructure.git')
+                              credentials('github-http')
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  - script: >
+      pipelineJob('mega-backup-list') {
+          parameters {
+              stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+          }
+          definition {
+              cpsScm {
+                  lightweight(false)
+                  scriptPath('jenkins/src/backup/list/Jenkinsfile')
+                  scm {
+                      git {
+                          branch('^${Branch}')
+                          remote {
+                              url('https://github.com/Gepardec/mega-infrastructure.git')
+                              credentials('github-http')
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  - script: >
+      pipelineJob('mega-backup-restore') {
+          parameters {
+            stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+          }
+          definition {
+              cpsScm {
+                  lightweight(false)
+                  scriptPath('jenkins/src/backup/restore/Jenkinsfile')
+                  scm {
+                      git {
+                          branch('^${Branch}')
+                          remote {
+                              url('https://github.com/Gepardec/mega-infrastructure.git')
+                              credentials('github-http')
+                          }
+                      }
+                  }
+              }
+          }
+      }

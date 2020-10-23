@@ -1,0 +1,31 @@
+#!groovy
+
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    parameters {
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
+        choice(name: 'stage', choices: ['all', 'dev', 'test', 'prod'], description: 'The stage filter for the backups')
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        BACKUP_ROOT_DIR = '/mega-backups'
+    }
+
+    stages {
+        stage('Backup') {
+            steps {
+                script {
+                    def stage = params.stage == 'all' ? '' : params.stage
+                    sh "find -L ${env.BACKUP_ROOT_DIR} -type f -ls -name 'backup-${stage}'*.tar.gz"
+                }
+            }
+        }
+    }
+}

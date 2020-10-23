@@ -1,0 +1,83 @@
+#!groovy
+
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'openshift'
+            yaml """
+kind: Pod
+metadata:
+  name: postgresql-agent-pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: postgresql
+      image: docker-registry.default.svc:5000/57-mega-dev/jenkins-agent-postgresql-10:latest
+      imagePullPolicy: Always
+      command:
+        - cat
+      tty: true
+      env:
+        - name: Branch
+          value: ${env.Branch}
+      resources:
+        limits:
+          memory: 128Mi
+          cpu: 250m
+      volumeMounts:
+        - name: backup
+          mountPath: /backup
+  restartPolicy: Never
+  volumes:
+    - name: backup
+      persistentVolumeClaim:
+        claimName: mega-backup
+"""
+        }
+    }
+
+    triggers {
+        cron('H 0 * * 7')
+    }
+
+    parameters {
+        string(name: 'Branch', defaultValue: 'feature/backups', description: 'The branch/commit/tag to get the Jenkinsfile from')
+        choice(name: 'stage', choices: ['dev', 'test', 'prod'], description: 'The stage to backup')
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        BACKUP_ROOT_DIR = '/backup'
+        BACKUP_VERSION = 'v1'
+        TIME_TRIGGER_STAGE = 'dev'
+    }
+
+    stages {
+        stage('Backup') {
+            steps {
+                script {
+                    container('postgresql') {
+                        openshift.withCluster() {
+                            def stage = isTimeTriggered() ? env.TIME_TRIGGER_STAGE : params.stage
+                            def dumpFile = "${env.BACKUP_ROOT_DIR}/backup-${stage}-${env.BUILD_TIMESTAMP}-${env.BACKUP_VERSION}.tar.gz"
+                            withCredentials([usernamePassword(credentialsId: "mega-db-${env.stage}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                                sh "set +x \
+                                    && export PGPASSWORD=${PASSWORD} \
+                                    && psql -h mega-zep-db.57-mega-${stage}.svc -p 5432 -U postgres -w -d postgres -c \"select pg_terminate_backend(pid) from pg_stat_activity where datname='${env.DB_NAME}';\" \
+                                    && pg_dump -h mega-zep-db.57-mega-${stage}.svc -p 5432 -U ${USERNAME} -w --format tar --file ${dumpFile} mega"
+                                sh "ls ${dumpFile} -lrta"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+boolean isTimeTriggered() {
+    return "${currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')}".contains("TimerTriggerCause")
+}

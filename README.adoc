@@ -13,16 +13,36 @@ The test environment where the acceptance tests are performed.
 . ``mega-prod`` +
 The production system of the MEGA Project.
 
-The cited image illustrates the system of the MEGA Project, its involved services, interactions and zones. Each zone is protected by OAuth whereby each zone uses its own ``clientId``.
+The cited image illustrates the system of the MEGA Project, its involved services, interactions and zones.
+Each zone is protected by OAuth whereby each zone uses its own ``clientId``.
 
 .Mega System
 image::/doc/images/mega-system.png[]
+
+== Backup
+
+The mega databaseis backed up by a Jenkins Pipeline and stored in an Openshift PVC.
+
+.Mega Backup
+image::/doc/images/mega-backup.png[]
+
+IMPORTANT: The backups are synced to a local machine periodically and uploaded to the secure storage manually because the storage cannot be accessed by Jenkins directly.
+
+=== Download backups
+
+The backup files ca be synced to a local machine via the Openshift client binary.
+
+.Sync Backups to local machine
+[source,bash]
+----
+oc rsync <POD_ID>:/mega-backups/ .
+----
 
 == Project Resources
 
 === Dockerfiles
 
-The cited Dockerfiles are used to build the jenkins build agents for the MEGA Project. 
+The cited Dockerfiles are used to build the jenkins build agents for the MEGA Project.
 
 * link:/docker/agent-nodejs/Dockerfile[agent-nodejs/Dockerfile] +
 The Dockerfile for building the nodejs build agent.
@@ -33,8 +53,7 @@ The Dockerfile for building the OpenJDK build agent.
 
 ==== Jenkins S2i
 
-We use a custom Jenkins which is based on the official Openshift-Jenkins-Image and 
-which is build via the S2I mechanism.
+We use a custom Jenkins which is based on the official Openshift-Jenkins-Image and which is build via the S2I mechanism.
 
 * link:/s2i/jenkins[s2i/jenkins] +
 The directory holding the s2i sources.
@@ -50,7 +69,8 @@ Jenkins is configured via the link:https://jenkins.io/projects/jcasc/[configurea
 * link:/config/jenkins/jenkins-config.yaml[/config/jenkins/jenkins-config.yaml] +
 The YAML configuration file which configures the Jenkins instance and the MEGA Job Definitions.
 
-TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift. Because the configuration files doesn't contain any secrets, this configuration file is part of the repository.
+TIP: The YAML configuration file references secrets via environment variables, which are injected into the container by Openshift.
+Because the configuration files doesn't contain any secrets, this configuration file is part of the repository.
 
 ==== MEGA
 
@@ -58,12 +78,15 @@ The configuration for MEGA is provided via a properties file and a secret file.
 Each used stage needs its own configuration file to separate the configurations per stage.
 
 * ``application.<STAGE>.properties`` +
-The staged configuration file. (Part of the repository)
+The staged configuration file.
+(Part of the repository)
 * ``application.<STAGE>.properties`` +
-The staged secret file. (In Cloud storage)
+The staged secret file.
+(In Cloud storage)
 
 
-TIP: The secret file must be provided manually. See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
+TIP: The secret file must be provided manually.
+See link:https://github.com/Gepardec/mega[MEGA Repository] for possible configuration values.
 
 == Openshift Templates
 
@@ -74,9 +97,9 @@ For the Jenkins service we use multiple Openshift Templates which are used to de
 . link:/apps/jenkins/jenkins.yaml[/apps/jenkins/jenkins.yaml] +
 The Jenkins Openshift Template defining the Jenkins service.
 . link:/apps/jenkins/jenkins-agent-bc.yaml[/apps/jenkins/jenkins-agent-bc.yaml] +
-The Openshift Template holding the definitions of the by agents used  Container Images and Openshift Build Configurations.  
+The Openshift Template holding the definitions of the by agents used Container Images and Openshift Build Configurations.
 . link:/apps/jenkins/jenkins-bc.yaml[/apps/jenkins/jenkins-bc.yaml] +
-The Openshift Template holding the Openshift Build Configurations for the custom Jenkins build.   
+The Openshift Template holding the Openshift Build Configurations for the custom Jenkins build.
 . link:/apps/jenkins/jenkins-pvc.yaml[/apps/jenkins/jenkins-pvc.yaml] +
 The Openshift Template holding the definition for the persistence storage of Jenkins in Openshift.
 . link:/apps/jenkins/maven-pvc.yaml[/apps/jenkins/maven-pvc.yaml] +
@@ -95,7 +118,7 @@ The name of the Openshift image Stream for the custom Jenkins Build Container Im
 . ``GIT_URL=https://github.com/Gepardec/mega-infrastructure.git`` +
 The git repository url for the Jenkins related Openshift Build Configurations
 . ``GIT_REF=master`` +
-The git reference used for the Jenkins related Openshift Build Configurations 
+The git reference used for the Jenkins related Openshift Build Configurations
 . ``GIT_SECRET=github-http`` +
 The name of the Openshift secret providing the Openshift Secret of type ``kubernetes.io/basic-auth``
 . ``MAVEN_VERSION=3.6.1`` +
@@ -104,10 +127,13 @@ The Maven version used by the JDK build agent Container Image
 The Jenkins Service assgined RAM
 . ``MAVEN_VERSION=3.6.3`` +
 The Maven Version to use for the ``agent-jdk`` Jenkins Agent Pod
+. ``MEGA_BACKUP_PVC`` +
+The name of the backup pvc of mega
 
 === MEGA
 
-The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift. The templates are parametrized and whereby the parameter values are provided via properties files. +
+The MEGA Project uses 2 Openshift Templates, one for the ``backend`` and one for the ``frontend`` to integrate the MEGA services in openshift.
+The templates are parametrized and whereby the parameter values are provided via properties files. +
 
 * ``link:/apps/mega-zep/mega-zep-backend.yaml:[mega-zep-backend.yaml]`` +
 The ``backend`` Openshift Template
@@ -118,16 +144,14 @@ The ``backend`` Openshift Template
 * ``link:/apps/mega-zep:[mega-zep-frontend.<STAGE>.properties]`` +
 The staged ``frontend`` configuration file
 
-The ``backend`` can be configured via the cited configuration properties. 
+The ``backend`` can be configured via the cited configuration properties.
 
 * ``APP=mega-zep`` +
-The value for the app label, which is add to each created Openshift Resource 
+The value for the app label, which is add to each created Openshift Resource
 * ``NAME=mega-zep-backend`` +
 The value for the service and created Openshift Resources
 * ``SECRET=mega`` +
 The name of the secret holding the MEGA secrets for the specific stage
-* ``CONFIG_MAP=mega`` +
-The name of the configuration holding the MEGA configurations for the specific stage
 * ``CPU=500m`` +
 The assigned CPU resources to the service
 * ``MEMORY=256Mi`` +
@@ -135,10 +159,10 @@ The assigned RAM resources to the services
 * ``TIMEZONE=Europe/Vienna`` +
 The timezone to set on the container
 
-The ``frontend`` can be configured via the cited configuration properties. 
+The ``frontend`` can be configured via the cited configuration properties.
 
 * ``APP=mega-zep`` +
-The value for the app label, which is add to each created Openshift Resource 
+The value for the app label, which is add to each created Openshift Resource
 * ``NAME=mega-zep-frontend`` +
 The value for the service and created Openshift Resources
 * ``CPU=500m`` +
@@ -217,15 +241,16 @@ IMPORTANT: The password must be a generated API Token and not the account passwo
 The MEGA Project configuration properties are described on the MEGA link:https://github.com/Gepardec/mega[MEGA Repository].
 
 * ``mega-secrets.dev.properties`` +
-The DEV stage MEGA configuration 
+The DEV stage MEGA configuration
 * ``mega-secrets.test.properties`` +
-The TEST stage MEGA configuration 
+The TEST stage MEGA configuration
 * ``mega-secrets.prod.properties`` +
-The PROD stage MEGA configuration 
+The PROD stage MEGA configuration
 
 === Google OAuth2 client setup
 
-Each stage uses its own OAuth clientId/clientSecret and therefore each stages has to be setup in Google. See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
+Each stage uses its own OAuth clientId/clientSecret and therefore each stages has to be setup in Google.
+See link:https://developers.google.com/identity/protocols/OAuth2UserAgent[here] for a description how to setup a google oauth client.
 
 === Openshift Dev Project
 
@@ -233,91 +258,107 @@ Each stage uses its own OAuth clientId/clientSecret and therefore each stages ha
 [source,bash]
 ----
 # Create secrets
-STAGE=dev oc apps/ocp.sh createMegaSecrets
-oc apps/ocp.sh createJenkinsSecrets
+STAGE=dev apps/ocp.sh createMegaSecrets
+apps/ocp.sh createJenkinsSecrets
 
 # Delete secrets
-oc apps/ocp.sh deleteMegaSecrets
-oc apps/ocp.sh deleteJenkinsSecrets
+apps/ocp.sh deleteMegaSecrets
+apps/ocp.sh deleteJenkinsSecrets
 
 # Delete/Create secrets
-STAGE=dev oc apps/ocp.sh recreateMegaSecrets
-oc apps/ocp.sh recreateJenkinsSecrets
+STAGE=dev apps/ocp.sh recreateMegaSecrets
+apps/ocp.sh recreateJenkinsSecrets
 ----
 
 .Build Configurations
 [source,bash]
 ----
 # Create all build configs
-oc apps/ocp.sh createBuildConfigs
+apps/ocp.sh createBuildConfigs
 
 # Delete all build configs
-oc apps/ocp.sh deleteBuildConfigs
+apps/ocp.sh deleteBuildConfigs
 
 # Delete/Create all build configs
-oc apps/ocp.sh recreateBuildConfigs
+apps/ocp.sh recreateBuildConfigs
 ----
+
+.Mega Backup PVC
+[source,bash]
+----
+# Create Backup PVC
+apps/ocp.sh createMegaBackupPvc
+
+# Delete Backup PVC
+apps/ocp.sh deleteMegaBackupPvc
+
+# Recreate Backup PVC
+apps/ocp.sh recreateMegaBackupPvc
+----
+
+IMPORTANT: Take care that all backups are saved before deleting or recreating the backup persistence volume.
+Jenkins requires the backup pvc to exist because Jenkins uses it as a volume.
 
 .Jenkins Application
 [source,bash]
 ----
 # Create jenkins
-oc apps/ocp.sh createJenkins
+apps/ocp.sh createJenkins
 
 # Delete jenkins
-oc apps/ocp.sh deleteJenkins
+apps/ocp.sh deleteJenkins
 
 # Delete/Create jenkins
-oc apps/ocp.sh recreateJenkins
+apps/ocp.sh recreateJenkins
 
 # Create jenkins pvc
-oc apps/ocp.sh createJenkinsPvc
+apps/ocp.sh createJenkinsPvc
 
 # Delete jenkins pvc
-oc apps/ocp.sh deleteJenkinsPvc
+apps/ocp.sh deleteJenkinsPvc
 
 # Delete/Create jenkins pvc
-oc apps/ocp.sh recreateJenkinsPvc
+apps/ocp.sh recreateJenkinsPvc
 
 # Create maven pvc
-oc apps/ocp.sh createMavenPvc
+apps/ocp.sh createMavenPvc
 
 # Delete maven pvc
-oc apps/ocp.sh deleteMavenPvc
+apps/ocp.sh deleteMavenPvc
 
 # Delete/Create maven pvc
-oc apps/ocp.sh recreateMavenPvc
+apps/ocp.sh recreateMavenPvc
 ----
 
 .MEGA database
 [source,bash]
 ----
 # Create the mega db image streams
-oc apps/ocp.sh createMegaDbIs
+apps/ocp.sh createMegaDbIs
 
 # Delete the mega db image streams
-oc apps/ocp.sh deleteMegaDbIs
+apps/ocp.sh deleteMegaDbIs
 
 # Delete/Create the mega db image streams
-oc apps/ocp.sh recreateMegaDbIs
+apps/ocp.sh recreateMegaDbIs
 
 # Create the mega db persistence volume
-oc apps/ocp.sh createMegaDbPvc
+apps/ocp.sh createMegaDbPvc
 
 # Delete the mega db persistence volume
-oc apps/ocp.sh deleteMegaDbPvc
+apps/ocp.sh deleteMegaDbPvc
 
 # Delete/Create the mega db persistence volume
-oc apps/ocp.sh recreateMegaDbPvc
+apps/ocp.sh recreateMegaDbPvc
 
 # Create the mega db
-oc apps/ocp.sh createMegaDb
+apps/ocp.sh createMegaDb
 
 # Delete the mega db
-oc apps/ocp.sh deleteMegaDb
+apps/ocp.sh deleteMegaDb
 
 # Delete/Create the mega db
-oc apps/ocp.sh recreateMegaDb
+apps/ocp.sh recreateMegaDb
 ----
 
 IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars in ``apps/ocp.sh`` are properly setup for your needs.
@@ -328,7 +369,7 @@ IMPORTANT: Ensure that the properties in ``ocp/jenkins.properties`` and env vars
 [source,bash]
 ----
 # Create secrets
-STAGE=[prod|test] oc apps/ocp.sh createMegaSecrets
+STAGE=[prod|test] apps/ocp.sh createMegaSecrets
 ----
 
 IMPORTANT: Ensure that the configuration is properly setup for the selected stage and that you have set the proper project context
@@ -339,4 +380,6 @@ IMPORTANT: Ensure that the configuration is properly setup for the selected stag
 
 ==== First Repository Scan cannot consume credential
 
-After Jenkins has newly deployed the build pipelines tries to scan the github repository for branches whereby it cannot consume the assigend credential the firt time the scan is executed. Therefore, after a deployment you need to skip the first execution of the scan and restart it. The second time the crednetial is consume correctly.  
+After Jenkins has newly deployed the build pipelines tries to scan the github repository for branches whereby it cannot consume the assigend credential the firt time the scan is executed.
+Therefore, after a deployment you need to skip the first execution of the scan and restart it.
+The second time the crednetial is consume correctly.
