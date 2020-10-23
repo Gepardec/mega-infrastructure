@@ -41,7 +41,7 @@ spec:
     }
 
     parameters {
-        string(name: 'Branch', defaultValue: 'feature/backups', description: 'The branch/commit/tag to get the Jenkinsfile from')
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
         choice(name: 'stage', choices: ['dev', 'test', 'prod'], description: 'The stage to backup')
     }
 
@@ -63,7 +63,7 @@ spec:
                         openshift.withCluster() {
                             def stage = isTimeTriggered() ? env.TIME_TRIGGER_STAGE : params.stage
                             def dumpFile = "${env.BACKUP_ROOT_DIR}/backup-${stage}-${env.BUILD_TIMESTAMP}-${env.BACKUP_VERSION}.tar.gz"
-                            withCredentials([usernamePassword(credentialsId: "mega-db-${env.stage}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                            withCredentials([usernamePassword(credentialsId: "mega-db-${stage}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                 sh "set +x \
                                     && export PGPASSWORD=${PASSWORD} \
                                     && psql -h mega-zep-db.57-mega-${stage}.svc -p 5432 -U postgres -w -d postgres -c \"select pg_terminate_backend(pid) from pg_stat_activity where datname='${env.DB_NAME}';\" \

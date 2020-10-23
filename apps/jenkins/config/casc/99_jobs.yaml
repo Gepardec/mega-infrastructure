@@ -59,7 +59,7 @@ jobs:
   - script: >
       pipelineJob('mega-backup-backup') {
           parameters {
-                stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+                stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
           }
           definition {
               cpsScm {
@@ -80,7 +80,7 @@ jobs:
   - script: >
       pipelineJob('mega-backup-list') {
           parameters {
-              stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+              stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
           }
           definition {
               cpsScm {
@@ -101,7 +101,7 @@ jobs:
   - script: >
       pipelineJob('mega-backup-restore') {
           parameters {
-            stringParam('Branch', 'feature/backups', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+            stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
           }
           definition {
               cpsScm {
