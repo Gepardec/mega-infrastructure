@@ -1,0 +1,41 @@
+#!groovy
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
+        choice(name: 'stage', choices: ['default','dev', 'test', 'prod'], description: 'The environment to deploy to')
+    }
+
+    environment {
+        MEGA_PROJECT = "57-mega-"
+        TARGET_PROJECT = "${env.MEGA_PROJECT + params.target}"
+        OCP_ROUTE_SUFFIX = "${env.TARGET_PROJECT}.cloud.itandtel.at"
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                script {
+                    // mega-zep-db.57-mega-dev.svc:543
+                    sh "oc project ${env.TARGET_PROJECT}"
+                }
+            }
+        }
+
+        stage('Backup') {
+            steps {
+                script {
+                    openshift.withCluster() {
+
+                    }
+                }
+            }
+        }
+    }
+}
