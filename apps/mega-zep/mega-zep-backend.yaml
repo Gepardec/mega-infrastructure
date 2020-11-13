@@ -40,9 +40,13 @@ objects:
                 - name: JAVA_MAX_MEM_RATIO
                   value: "95"
                 - name: JAVA_OPTIONS
-                  value: "-XX:MaxRAMPercentage=95 ${JAVA_OPTIONS}"
+                  value: "${JAVA_OPTIONS}"
                 - name: TZ
                   value: "${TIMEZONE}"
+                - name: JAVA_MAX_MEM_RATIO
+                  value: 95
+                - name: JAVA_INIT_MEM_RATIO
+                  value: 95
               image: "${IMAGE}"
               imagePullPolicy: Always
               name: "${NAME}"
