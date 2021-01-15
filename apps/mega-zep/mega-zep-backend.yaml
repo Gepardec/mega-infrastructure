@@ -18,11 +18,11 @@ objects:
         app: "${APP}"
         deploymentconfig: "${NAME}"
       strategy:
-        activeDeadlineSeconds: 21600
-        rollingParams:
+        type: Recreate
+        recreateParams:
           timeoutSeconds: 120
           updatePeriodSeconds: 1
-        type: Rolling
+        activeDeadlineSeconds: 21600
       template:
         metadata:
           annotations:
