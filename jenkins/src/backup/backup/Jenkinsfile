@@ -52,7 +52,7 @@ spec:
     environment {
         BACKUP_ROOT_DIR = '/backup'
         BACKUP_VERSION = 'v1'
-        TIME_TRIGGER_STAGE = 'dev'
+        TIME_TRIGGER_STAGE = 'prod'
     }
 
     stages {
