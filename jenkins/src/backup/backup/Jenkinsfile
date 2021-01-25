@@ -36,9 +36,10 @@ spec:
         }
     }
 
-    triggers {
-        cron('H 0 * * 7')
-    }
+    // TODO: Networks are not joined, therefore cannot access prod database
+//    triggers {
+//        cron('H 0 * * 7')
+//    }
 
     parameters {
         string(name: 'Branch', defaultValue: 'master', description: 'The branch/commit/tag to get the Jenkinsfile from')
