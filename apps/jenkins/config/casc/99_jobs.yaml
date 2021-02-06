@@ -56,66 +56,66 @@ jobs:
               }
           }
       }
-  - script: >
-      pipelineJob('mega-backup-backup') {
-          parameters {
-                stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
-          }
-          definition {
-              cpsScm {
-                  lightweight(false)
-                  scriptPath('jenkins/src/backup/backup/Jenkinsfile')
-                  scm {
-                      git {
-                          branch('^${Branch}')
-                          remote {
-                              url('https://github.com/Gepardec/mega-infrastructure.git')
-                              credentials('github-http')
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  - script: >
-      pipelineJob('mega-backup-list') {
-          parameters {
-              stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
-          }
-          definition {
-              cpsScm {
-                  lightweight(false)
-                  scriptPath('jenkins/src/backup/list/Jenkinsfile')
-                  scm {
-                      git {
-                          branch('^${Branch}')
-                          remote {
-                              url('https://github.com/Gepardec/mega-infrastructure.git')
-                              credentials('github-http')
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  - script: >
-      pipelineJob('mega-backup-restore') {
-          parameters {
-            stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
-          }
-          definition {
-              cpsScm {
-                  lightweight(false)
-                  scriptPath('jenkins/src/backup/restore/Jenkinsfile')
-                  scm {
-                      git {
-                          branch('^${Branch}')
-                          remote {
-                              url('https://github.com/Gepardec/mega-infrastructure.git')
-                              credentials('github-http')
-                          }
-                      }
-                  }
-              }
-          }
-      }
+#  - script: >
+#      pipelineJob('mega-backup-backup') {
+#          parameters {
+#                stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+#          }
+#          definition {
+#              cpsScm {
+#                  lightweight(false)
+#                  scriptPath('jenkins/src/backup/backup/Jenkinsfile')
+#                  scm {
+#                      git {
+#                          branch('^${Branch}')
+#                          remote {
+#                              url('https://github.com/Gepardec/mega-infrastructure.git')
+#                              credentials('github-http')
+#                          }
+#                      }
+#                  }
+#              }
+#          }
+#      }
+#  - script: >
+#      pipelineJob('mega-backup-list') {
+#          parameters {
+#              stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+#          }
+#          definition {
+#              cpsScm {
+#                  lightweight(false)
+#                  scriptPath('jenkins/src/backup/list/Jenkinsfile')
+#                  scm {
+#                      git {
+#                          branch('^${Branch}')
+#                          remote {
+#                              url('https://github.com/Gepardec/mega-infrastructure.git')
+#                              credentials('github-http')
+#                          }
+#                      }
+#                  }
+#              }
+#          }
+#      }
+#  - script: >
+#      pipelineJob('mega-backup-restore') {
+#          parameters {
+#            stringParam('Branch', 'master', 'The Branch/Tag/Commit of the Jenkinsfile to execute')
+#          }
+#          definition {
+#              cpsScm {
+#                  lightweight(false)
+#                  scriptPath('jenkins/src/backup/restore/Jenkinsfile')
+#                  scm {
+#                      git {
+#                          branch('^${Branch}')
+#                          remote {
+#                              url('https://github.com/Gepardec/mega-infrastructure.git')
+#                              credentials('github-http')
+#                          }
+#                      }
+#                  }
+#              }
+#          }
+#      }

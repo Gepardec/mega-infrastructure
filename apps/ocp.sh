@@ -36,20 +36,20 @@ function createJenkinsSecrets {
     oc annotate secret jenkins-dockerhub jenkins.openshift.io/secret.name=dockerhub
     oc label secret jenkins-dockerhub credential.sync.jenkins.openshift.io=true
 
-    # Create jenkins mega db dev secret
-    oc create secret generic jenkins-mega-db-dev --from-env-file=../secrets/jenkins/jenkins-mega-db-dev.properties --type=kubernetes.io/basic-auth
-    oc annotate secret jenkins-mega-db-dev jenkins.openshift.io/secret.name=mega-db-dev
-    oc label secret jenkins-mega-db-dev credential.sync.jenkins.openshift.io=true
-
-    # Create jenkins mega db test secret
-    oc create secret generic jenkins-mega-db-test --from-env-file=../secrets/jenkins/jenkins-mega-db-test.properties --type=kubernetes.io/basic-auth
-    oc annotate secret jenkins-mega-db-test jenkins.openshift.io/secret.name=mega-db-test
-    oc label secret jenkins-mega-db-test credential.sync.jenkins.openshift.io=true
-
-    # Create jenkins mega db prod secret
-    oc create secret generic jenkins-mega-db-prod --from-env-file=../secrets/jenkins/jenkins-mega-db-prod.properties --type=kubernetes.io/basic-auth
-    oc annotate secret jenkins-mega-db-prod jenkins.openshift.io/secret.name=mega-db-prod
-    oc label secret jenkins-mega-db-prod credential.sync.jenkins.openshift.io=true
+#    # Create jenkins mega db dev secret
+#    oc create secret generic jenkins-mega-db-dev --from-env-file=../secrets/jenkins/jenkins-mega-db-dev.properties --type=kubernetes.io/basic-auth
+#    oc annotate secret jenkins-mega-db-dev jenkins.openshift.io/secret.name=mega-db-dev
+#    oc label secret jenkins-mega-db-dev credential.sync.jenkins.openshift.io=true
+#
+#    # Create jenkins mega db test secret
+#    oc create secret generic jenkins-mega-db-test --from-env-file=../secrets/jenkins/jenkins-mega-db-test.properties --type=kubernetes.io/basic-auth
+#    oc annotate secret jenkins-mega-db-test jenkins.openshift.io/secret.name=mega-db-test
+#    oc label secret jenkins-mega-db-test credential.sync.jenkins.openshift.io=true
+#
+#    # Create jenkins mega db prod secret
+#    oc create secret generic jenkins-mega-db-prod --from-env-file=../secrets/jenkins/jenkins-mega-db-prod.properties --type=kubernetes.io/basic-auth
+#    oc annotate secret jenkins-mega-db-prod jenkins.openshift.io/secret.name=mega-db-prod
+#    oc label secret jenkins-mega-db-prod credential.sync.jenkins.openshift.io=true
 
     # Create jenkins-config-secret
     oc create configmap jenkins-config --from-file=./jenkins/config/casc/

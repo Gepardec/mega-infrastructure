@@ -12,18 +12,18 @@ jenkins:
           - "lastDuration"
           - "buildButton"
           - "favoriteColumn"
-    - list:
-        name: "Mega-Backups"
-        includeRegex: "mega-backup-.*"
-        columns:
-          - "status"
-          - "weather"
-          - "jobName"
-          - "lastSuccess"
-          - "lastFailure"
-          - "lastDuration"
-          - "buildButton"
-          - "favoriteColumn"
+#    - list:
+#        name: "Mega-Backups"
+#        includeRegex: "mega-backup-.*"
+#        columns:
+#          - "status"
+#          - "weather"
+#          - "jobName"
+#          - "lastSuccess"
+#          - "lastFailure"
+#          - "lastDuration"
+#          - "buildButton"
+#          - "favoriteColumn"
     - list:
         name: "Mega-All"
         includeRegex: "mega-.*"
