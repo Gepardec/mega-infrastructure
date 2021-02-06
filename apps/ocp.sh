@@ -135,11 +135,6 @@ function deleteMegaBackupPvc {
     oc delete -f backup/mega-backup-pvc.yaml
 }
 
-function recreateMEgaJenkinsPvc {
-    deleteMegaBackupPvc
-    createMegaBackupPvc
-}
-
 function createMavenPvc {
     oc process -f  jenkins/maven-pvc.yaml -o yaml --param-file=jenkins/jenkins.properties --ignore-unknown-parameters=true | oc apply -f -
 }
@@ -177,11 +172,6 @@ function deleteMegaDbPvc {
                  --ignore-not-found
 }
 
-function recreateMegaDbPvc {
-  deleteMegaDbPvc
-  createMegaDbPvc
-}
-
 function createMegaDb {
      oc process --filename mega-zep-db/template.yml \
                 --param-file=mega-zep-db/parameters.${STAGE}.properties \
@@ -205,6 +195,27 @@ function recreateMegaDb {
 function recreateMavenPvc {
     deleteMavenPvc
     createMavenPvc
+}
+
+function createMegaDbBackup {
+  oc create -f mega-zep-db/backup-cron.yml
+}
+
+function deleteMegaDbBackup {
+  oc delete -f mega-zep-db/backup-cron.yml
+}
+
+function recreateMegaDbBackup {
+  deleteMegaDbBackup
+  createMegaDbBackup
+}
+
+function createMegaDbRestore {
+  oc create -f mega-zep-db/restore-job.yml
+}
+
+function deleteMegaDbRestore {
+  oc delete -f mega-zep-db/restore-job.yml
 }
 
 ${1}

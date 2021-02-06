@@ -23,19 +23,46 @@ image::/doc/images/mega-system.png[]
 
 The mega databaseis backed up by a Jenkins Pipeline and stored in an Openshift PVC.
 
-.Mega Backup
+.Mega Backup (inactive)
 image::/doc/images/mega-backup.png[]
 
-IMPORTANT: The backups are synced to a local machine periodically and uploaded to the secure storage manually because the storage cannot be accessed by Jenkins directly.
+IMPORTANT: This type of backup is not working because we cannot get our Pod-Networks of the different OCP Projects merged.
+
+.Mega Backup via OCP CronJob (active)
+image::/doc/images/mega-backup-cron.png[]
+
+IMPORTANT: The CronJobs are working only within the project they are defined in.
 
 === Download backups
 
-The backup files ca be synced to a local machine via the Openshift client binary.
+The backups are stored on a PVc within the hosting Project and can be synced locally via the `mega-zep-db`service`.
 
 .Sync Backups to local machine
 [source,bash]
 ----
-oc rsync <POD_ID>:/mega-backups/ .
+oc rsync <POD_ID>:/mega-db-backups/ .
+----
+
+=== Restore a backup
+
+The backups are located on PVC within a project, so actually we can only restore backups to the project they were made from.
+
+IMPORTANT: First modify `/apps/mega-zep-db/restore-job.yml` env var `DUMPFILE` with the filename you want to restore which you retrieved from the `mega-db-service`.
+
+.Restore via OCP Job
+[source,bash]
+----
+# Then create the job, which is executed right away
+./apps/ocp.sh createMegaDbRestore
+
+# Check the pod state
+oc get pods
+
+# Check the logs of the COMPLETED job
+oc logs mega-db-restore-*
+
+# Delete the restore OCP Job
+./apps/ocp.sh deleteMegaDbRestore
 ----
 
 == Project Resources

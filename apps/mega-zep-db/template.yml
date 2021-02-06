@@ -107,10 +107,16 @@ objects:
               volumeMounts:
                 - name: ${NAME}
                   mountPath: /var/lib/pgsql/data
+                - name: "${NAME}-backups"
+                  mountPath: /mega-db-backup
+                  readOnly: true
           volumes:
             - name: ${NAME}
               persistentVolumeClaim:
                 claimName: ${PVC}
+            - name: "${NAME}-backups"
+              persistentVolumeClaim:
+                claimName: ${PVC_BACKUP}
 
   - kind: Service
     apiVersion: v1
@@ -154,6 +160,9 @@ parameters:
     required: true
 
   - name: "PVC"
+    required: true
+
+  - name: "PVC_BACKUP"
     required: true
 
   - name: "PGCTLTIMEOUT"

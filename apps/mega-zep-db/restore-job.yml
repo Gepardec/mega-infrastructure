@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "mega-db-restore"
+spec:
+  completions: 1
+  template:
+    metadata:
+      labels:
+        parent: "mega-db-restore"
+    spec:
+      containers:
+        - name: "mega-restore"
+          image: "docker-registry.default.svc:5000/57-mega-dev/postgresql:10"
+          command: ["/bin/sh", "-c"]
+          args:
+            - psql -h mega-zep-db.${NAMESPACE}.svc -p 5432 -U postgres -w -d postgres -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='${DATABASE}';"
+              && pg_restore -h mega-zep-db.${NAMESPACE}.svc -p 5432 -U postgres -w -d postgres --clean --if-exists --create --format tar /mega-db-backup/${DUMPFILE}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: "USER"
+              valueFrom:
+                secretKeyRef:
+                  name: "mega-zep-db"
+                  key: db.username
+            - name: "PGPASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "mega-zep-db"
+                  key: db.password
+            - name: "DATABASE"
+              valueFrom:
+                secretKeyRef:
+                  name: "mega-zep-db"
+                  key: db.name
+            - name: "NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: "DUMPFILE"
+              value: "YOU_NEED_TO_DEFINE_BEFORE_CREATING_THE_JOB"
+          volumeMounts:
+            - name: "mega-db-backup"
+              mountPath: /mega-db-backup
+      volumes:
+        - name: "mega-db-backup"
+          persistentVolumeClaim:
+            claimName: "mega-backup"
+      restartPolicy: Never

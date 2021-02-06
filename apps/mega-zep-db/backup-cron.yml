@@ -1,0 +1,59 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: "mega-db-backup"
+spec:
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  schedule: "*/1 * * * *" # H 0 * * 7
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            parent: "mega-db-backup"
+        spec:
+          containers:
+            - name: "mega-db-backup"
+              image: "docker-registry.default.svc:5000/57-mega-dev/postgresql:10"
+              command: ["/bin/sh", "-c"]
+              args:
+                - export TIMESTAMP="`date "+%Y%m%d-%H%M%S"`"
+                  && psql -h mega-zep-db.${NAMESPACE}.svc -p 5432 -U postgres -w -d postgres -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='${DATABASE}';"
+                  && pg_dump -h mega-zep-db.${NAMESPACE}.svc -p 5432 -U ${USER} -w --format tar --file /mega-db-backup/${NAMESPACE}-${TIMESTAMP}.tar.gz ${DATABASE}
+                  && ls /mega-db-backup -lrta
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "500m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "500m"
+              env:
+                - name: "USER"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "mega-zep-db"
+                      key: db.username
+                - name: "PGPASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "mega-zep-db"
+                      key: db.password
+                - name: "DATABASE"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "mega-zep-db"
+                      key: db.name
+                - name: "NAMESPACE"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+              volumeMounts:
+                - name: "mega-db-backup"
+                  mountPath: /mega-db-backup
+          volumes:
+            - name: "mega-db-backup"
+              persistentVolumeClaim:
+                claimName: "mega-backup"
+          restartPolicy: Never
