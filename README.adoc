@@ -40,7 +40,7 @@ The backups are stored on a PVc within the hosting Project and can be synced loc
 .Sync Backups to local machine
 [source,bash]
 ----
-oc rsync <POD_ID>:/mega-db-backups/ .
+oc rsync <POD_ID>:/mega-db-backup/ .
 ----
 
 === Restore a backup
