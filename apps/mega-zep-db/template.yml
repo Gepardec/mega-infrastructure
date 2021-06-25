@@ -109,7 +109,6 @@ objects:
                   mountPath: /var/lib/pgsql/data
                 - name: "${NAME}-backups"
                   mountPath: /mega-db-backup
-                  readOnly: true
           volumes:
             - name: ${NAME}
               persistentVolumeClaim:
