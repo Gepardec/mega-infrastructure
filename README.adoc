@@ -65,6 +65,12 @@ oc logs mega-db-restore-*
 ./apps/ocp.sh deleteMegaDbRestore
 ----
 
+.Manually create backup
+oc login ...
+kubectl create job --from=cronjob/mega-db-backup mega-db-backup-<date>-<time>
+
+does only work in prod
+
 == Project Resources
 
 === Dockerfiles
