@@ -65,7 +65,7 @@ oc logs mega-db-restore-*
 ./apps/ocp.sh deleteMegaDbRestore
 ----
 
-=== Manually create backup (only works on prod)
+=== Manually create backup
 ----
 # login to the OpenShift Console
 oc login https://manage.cloud.itandtel.at --token=<token>
@@ -73,7 +73,7 @@ oc login https://manage.cloud.itandtel.at --token=<token>
 # create the cronjob with the current date time. Format: yyyy-MM-dd-HH-mm-ss
 kubectl create job --from=cronjob/mega-db-backup mega-db-backup-<date>-<time>
 ----
-does only work in prod
+!!!does only work in prod!!! In dev and test there is no cronjob
 
 == Project Resources
 
