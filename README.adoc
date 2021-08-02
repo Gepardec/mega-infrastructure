@@ -66,10 +66,13 @@ oc logs mega-db-restore-*
 ----
 
 === Manually create backup (only works on prod)
+----
+# login to the OpenShift Console
 oc login https://manage.cloud.itandtel.at --token=<token>
 
+# create the cronjob with the current date time. Format: yyyy-MM-dd-HH-mm-ss
 kubectl create job --from=cronjob/mega-db-backup mega-db-backup-<date>-<time>
-
+----
 does only work in prod
 
 == Project Resources
