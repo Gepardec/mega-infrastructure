@@ -67,6 +67,7 @@ oc logs mega-db-restore-*
 
 === Manually create backup (only works on prod)
 oc login https://manage.cloud.itandtel.at --token=<token>
+
 kubectl create job --from=cronjob/mega-db-backup mega-db-backup-<date>-<time>
 
 does only work in prod
