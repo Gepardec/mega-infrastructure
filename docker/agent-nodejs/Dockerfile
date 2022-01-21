@@ -7,7 +7,7 @@ ENV NPM_CONFIG_PREFIX=/npm/.npm-global \
     PATH=/npm/node_modules/.bin/:/npm/.npm-global/bin:$PATH
 
 # Install NodeJS
-RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash - \
+RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \
     && yum install -y gcc c++ make nodejs skopeo \
     && npm install -g @angular/cli \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
