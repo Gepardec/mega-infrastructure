@@ -158,11 +158,11 @@ The git repository url for the Jenkins related Openshift Build Configurations
 The git reference used for the Jenkins related Openshift Build Configurations
 . ``GIT_SECRET=github-http`` +
 The name of the Openshift secret providing the Openshift Secret of type ``kubernetes.io/basic-auth``
-. ``MAVEN_VERSION=3.6.1`` +
+. ``MAVEN_VERSION=3.8.1`` +
 The Maven version used by the JDK build agent Container Image
 . ``MEMORY_LIMIT=2Gi`` +
 The Jenkins Service assgined RAM
-. ``MAVEN_VERSION=3.6.3`` +
+. ``MAVEN_VERSION=3.8.1`` +
 The Maven Version to use for the ``agent-jdk`` Jenkins Agent Pod
 . ``MEGA_BACKUP_PVC`` +
 The name of the backup pvc of mega
