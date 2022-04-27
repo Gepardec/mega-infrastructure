@@ -12,6 +12,7 @@ RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \
     && npm install -g @angular/cli \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
     && yum -y install google-chrome-stable_current_x86_64.rpm \
+    && yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib \
     && rm -f google-chrome-stable_current_x86_64.rpm \
     && yum clean all -y \
     && rm -rf /var/cache/yum \
