@@ -31,6 +31,11 @@ function createJenkinsSecrets {
     oc annotate secret jenkins-mega jenkins.openshift.io/secret.name=jenkins-mega
     oc label secret jenkins-mega credential.sync.jenkins.openshift.io=true
 
+    # Create mega secret for service and jenkins
+    oc create secret generic jenkins-mega-cypress --from-file=filename=../secrets/jenkins/jenkins-mega-cypress.properties
+    oc annotate secret jenkins-mega-cypress jenkins.openshift.io/secret.name=jenkins-mega-cypress
+    oc label secret jenkins-mega-cypress credential.sync.jenkins.openshift.io=true
+
     # Create git http secret (Necessary for multibranch plugin)
     oc create secret generic jenkins-dockerhub --from-env-file=../secrets/jenkins/jenkins-dockerhub.properties --type=kubernetes.io/basic-auth
     oc annotate secret jenkins-dockerhub jenkins.openshift.io/secret.name=dockerhub
@@ -63,6 +68,7 @@ function deleteJenkinsSecrets {
 
     oc delete secrets/github-http --ignore-not-found
     oc delete secrets/jenkins-mega --ignore-not-found
+    oc delete secrets/jenkins-mega-cypress --ignore-not-found
     oc delete secrets/jenkins-dockerhub --ignore-not-found
     oc delete secrets/jenkins-mega-db-dev --ignore-not-found
     oc delete secrets/jenkins-mega-db-test --ignore-not-found
